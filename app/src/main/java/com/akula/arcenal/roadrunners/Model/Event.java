@@ -20,6 +20,8 @@ public class Event {
         mOrganizer = givenOrganizer;
     }
 
+    /*
+
     private void IDGenerate(){
         String distIDComponent;
         if(mDistance < 0){
@@ -31,6 +33,8 @@ public class Event {
 
         mID = mName.substring(0, 3) + mLocation.substring(0, 3) + mOrganizer.substring(0, 3) + "-" + mDate.toString() + distIDComponent;
     }
+    */
+
 
     public String getID(){
         return mID;
@@ -74,6 +78,14 @@ public class Event {
 
     public String getOrganizer(){
         return mOrganizer;
+    }
+
+    public void addParticipants(String participant){
+        mParticipants.add(participant);
+    }
+
+    public ArrayList<String> getParticipants(){
+        return mParticipants;
     }
 
 }

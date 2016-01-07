@@ -1,6 +1,7 @@
 package com.akula.arcenal.roadrunners.Controller;
 import android.content.Context;
 
+import com.akula.arcenal.roadrunners.Model.Event;
 import com.android.volley.Cache;
 import com.android.volley.Network;
 import com.android.volley.Request;
@@ -85,9 +86,9 @@ public class ParseController {
     public void search(String dataType, String searchData, String searchField, final OnReadCompleteListener listener){
         String url = "https://api.parse.com/1/classes/" + dataType;
 
-        final JSONObject mJSONContent = new JSONObject();
+        final JSONObject searchParams = new JSONObject();
         try{
-            mJSONContent.put(searchField, searchData);
+            searchParams.put(searchField, searchData);
         }
         catch(JSONException e){
             //ERROR HANDLING HERE
@@ -109,9 +110,9 @@ public class ParseController {
             }
         }){
             @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("where", "Post TEST!");
+            protected Map<String, String> getParams(){
+                Map<String, String> params = new HashMap<>();
+                params.put("where", searchParams.toString());
 
                 return params;
             }
@@ -125,5 +126,42 @@ public class ParseController {
             }
         };
         mRequestQueue.add(JSONrequest);
+    }
+
+    public void saveEvent(Event event){
+        String mURL = "https://api.parse.com/1/classes/Event";
+        final JSONObject eventJSON = new JSONObject();
+        try{
+            eventJSON.put("name", event.getName());
+            eventJSON.put("location", event.getLocation());
+            eventJSON.put("distance", event.getDistance());
+            eventJSON.put("organizer", event.getOrganizer());
+            eventJSON.put("date", event.getDate());
+        }
+        catch(JSONException e){
+            //Error Handling Here
+        }
+
+        JsonObjectRequest mRequest = new JsonObjectRequest(Request.Method.POST, mURL, eventJSON, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError mErrors) {
+
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("Content-Type","application/json");
+                params.put("X-Parse-Application-Id", "X92n2Y7bH8mB3sjTDSe6vrNMIfYVEIrSiipWSiO2");
+                params.put("X-Parse-REST-API-Key", "qVwtXXbkHkyLfEwcf41jCnvESafpxQ553CmgTzYK");
+                return params;
+            }
+        };
+        mRequestQueue.add(mRequest);
     }
 }
