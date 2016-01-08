@@ -1,5 +1,6 @@
 package com.akula.arcenal.roadrunners.Controller;
 import android.content.Context;
+import android.util.Log;
 
 import com.akula.arcenal.roadrunners.Model.Event;
 import com.android.volley.Cache;
@@ -139,7 +140,7 @@ public class ParseController {
             eventJSON.put("date", event.getDate());
         }
         catch(JSONException e){
-            //Error Handling Here
+            Log.e("JSON Failure", "Save data corrupted!");
         }
 
         JsonObjectRequest mRequest = new JsonObjectRequest(Request.Method.POST, mURL, eventJSON, new Response.Listener<JSONObject>() {

@@ -16,8 +16,15 @@ import java.util.GregorianCalendar;
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
 public class ApplicationTest extends AndroidTestCase {
+
     public ApplicationTest() {
 
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        //Parse.initialize(getContext(), "X92n2Y7bH8mB3sjTDSe6vrNMIfYVEIrSiipWSiO2", "lo9StIG2u95JM7pvVJKKxsLpIpywvByAaPJ5KL1j");
     }
 
     public void testEventModel(){
@@ -40,40 +47,15 @@ public class ApplicationTest extends AndroidTestCase {
         assertEquals(expectedDate, test.getDate().toString());
     }
 
-    /*
+
 
     public void testParseController(){
         //TEST 2: PARSECONTROLLER DIRECT INVOKE -> SAVING EVENT
-        Context testContext = null;
-
-        while(testContext == null){
-            testContext = this.getContext();
-        }
-        Parse.initialize(testContext, "X92n2Y7bH8mB3sjTDSe6vrNMIfYVEIrSiipWSiO2", "lo9StIG2u95JM7pvVJKKxsLpIpywvByAaPJ5KL1j");
-
-        ParseController parseController = ParseController.getInstance(testContext);
+        ParseController parseController = ParseController.getInstance(getContext());
 
         GregorianCalendar referenceCalendar = new GregorianCalendar(2016, 11, 22, 11, 30);
         Event test = new Event("Viper's Nest", "Kuala Lumpur", "Viper Venom Pakour", 42, referenceCalendar.getTime());
 
         parseController.saveEvent(test);
-    }
-
-    */
-
-    public void testDateFormatter(){
-        String given = "{\"_type\":\"Date\",\"iso\":\"2016-04-07T05:48:00.000Z\"}";
-        String original = given;
-
-        given = given.replace("{", "");
-        given = given.replace("}", "");
-        given = given.replace("\"", "");
-        given = given.replace("_type:Date,iso:", "");
-        given = given.replace("T", " ");
-        given = given.substring(0, given.length() - 5);
-
-        Date testDate = EventController.dateFormat(original);
-        String expected = given;
-        assertEquals(expected, testDate);
     }
 }

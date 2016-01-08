@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <android.support.v7.widget.CardView
@@ -16,7 +16,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/eventName"
+                android:id="@+id/event_name"
+                android:text="name"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="16dp"
@@ -24,26 +25,32 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/eventLocation"
-                android:layout_below="@+id/eventName"
+                android:id="@+id/event_location"
+                android:text="location"
+                android:layout_below="@+id/event_name"
                 android:layout_alignParentLeft="true"
                 android:textSize="16sp"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/eventDistance"
-                android:layout_toRightOf="@+id/eventName"
-                android:layout_alignParentLeft="true"
+                android:id="@+id/event_organizer"
+                android:layout_below="@id/event_location"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/event_distance"
+                android:text="200KM"
+                android:layout_toLeftOf="@+id/join_event_button"
                 />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:id="@+id/joinEventButton"
+                android:id="@+id/join_event_button"
                 android:layout_alignParentRight="true"
                 android:drawableBottom="@drawable/standing"/>
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
-</LinearLayout>
+</RelativeLayout>

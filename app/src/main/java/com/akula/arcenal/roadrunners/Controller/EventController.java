@@ -1,11 +1,12 @@
 package com.akula.arcenal.roadrunners.Controller;
 
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 
 import com.akula.arcenal.roadrunners.Model.Event;
+import com.akula.arcenal.roadrunners.View.EventListFragment;
 import com.akula.arcenal.roadrunners.View.RecyclerViewAdapter;
-import com.parse.Parse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +21,9 @@ import java.util.Date;
  * Created by Arcenal on 6/1/2016.
  */
 public class EventController {
+    public interface OnOperationCompleteListener{
+        public void onOperationComplete(RecyclerViewAdapter adapter, Exception error);
+    };
 
     private static Context sApplicationContext;
 
@@ -27,34 +31,28 @@ public class EventController {
         sApplicationContext = givenContext;
     }
 
-    public static void listAllEvents(final RecyclerView givenRecyclerView){
+    public static void listAllEvents(final OnOperationCompleteListener listener){
         ParseController parseControl = ParseController.getInstance(sApplicationContext);
         parseControl.list("Event", new ParseController.OnReadCompleteListener() {
             @Override
             public void onReadComplete(JSONObject resultObject, Exception ex) {
-                displayEventsOnView(resultObject, givenRecyclerView);
+                try{
+                    JSONArray eventResultJSONArray = resultObject.getJSONArray("results");
+
+                    ArrayList<Event> events = new ArrayList<>();
+
+                    int eventsSize = eventResultJSONArray.length();
+                    for(int i = 0; i < eventsSize; i ++){
+                        JSONObject event = eventResultJSONArray.getJSONObject(i);
+                        events.add(new Event(event.getString("name"), event.getString("location"), event.getString("organizer"), event.getDouble("distance"), dateFormat((JSONObject)event.get("date"))));
+                    }
+                    listener.onOperationComplete(new RecyclerViewAdapter(events), null);
+                }
+                catch(JSONException e){
+                    listener.onOperationComplete(null, e);
+                }
             }
         });
-    }
-
-    private static void displayEventsOnView(JSONObject eventResultJSON, RecyclerView givenRecyclerView){
-        try{
-            JSONArray  eventResultJSONArray = eventResultJSON.getJSONArray("result");
-
-            ArrayList<Event> events = new ArrayList<>();
-
-            int eventsSize = eventResultJSON.length();
-            for(int i = 0; i < eventsSize; i ++){
-                    JSONObject event = eventResultJSONArray.getJSONObject(i);
-                    events.add(new Event(event.getString("name"), event.getString("location"), event.getString("Organizer"), event.getDouble("distance"), dateFormat((JSONObject)event.get("date"))));
-            }
-
-            RecyclerViewAdapter recyclerViewAdapter = new RecyclerViewAdapter(events);
-            givenRecyclerView.setAdapter(recyclerViewAdapter);
-        }
-        catch(JSONException e){
-            //ERROR HANDLING
-        }
     }
 
     //tested, proven method. Uses old school idiot way......
