@@ -4,10 +4,12 @@ import android.content.Context;
 import android.test.AndroidTestCase;
 import android.test.InstrumentationTestCase;
 
+import com.akula.arcenal.roadrunners.Controller.EventController;
 import com.akula.arcenal.roadrunners.Controller.ParseController;
 import com.akula.arcenal.roadrunners.Model.Event;
 import com.parse.Parse;
 
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
@@ -38,6 +40,8 @@ public class ApplicationTest extends AndroidTestCase {
         assertEquals(expectedDate, test.getDate().toString());
     }
 
+    /*
+
     public void testParseController(){
         //TEST 2: PARSECONTROLLER DIRECT INVOKE -> SAVING EVENT
         Context testContext = null;
@@ -53,5 +57,23 @@ public class ApplicationTest extends AndroidTestCase {
         Event test = new Event("Viper's Nest", "Kuala Lumpur", "Viper Venom Pakour", 42, referenceCalendar.getTime());
 
         parseController.saveEvent(test);
+    }
+
+    */
+
+    public void testDateFormatter(){
+        String given = "{\"_type\":\"Date\",\"iso\":\"2016-04-07T05:48:00.000Z\"}";
+        String original = given;
+
+        given = given.replace("{", "");
+        given = given.replace("}", "");
+        given = given.replace("\"", "");
+        given = given.replace("_type:Date,iso:", "");
+        given = given.replace("T", " ");
+        given = given.substring(0, given.length() - 5);
+
+        Date testDate = EventController.dateFormat(original);
+        String expected = given;
+        assertEquals(expected, testDate);
     }
 }

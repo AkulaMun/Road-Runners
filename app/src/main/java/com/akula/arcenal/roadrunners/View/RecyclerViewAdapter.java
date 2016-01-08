@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.akula.arcenal.roadrunners.Model.Event;
+import com.akula.arcenal.roadrunners.R;
 
 import java.util.ArrayList;
 
@@ -16,45 +17,45 @@ import java.util.ArrayList;
  */
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.EventHolder> {
 
-    private ArrayList<Event> mCurrentEntries;
+    public static class EventHolder extends RecyclerView.ViewHolder {
+        private CardView mEventEntryHolder;
+        private TextView mEventEntryName, mEventEntryLocation, mEventEntryDistance;
 
-    public RecyclerViewAdapter(ArrayList<Event> mGivenEntries){
-        mCurrentEntries = mGivenEntries;
+        public EventHolder(View mItemView) {
+            super(mItemView);
+            mEventEntryHolder = (CardView) mItemView.findViewById(R.id.eventEntry);
+            mEventEntryName = (TextView) mItemView.findViewById(R.id.eventName);
+            mEventEntryLocation = (TextView) mItemView.findViewById(R.id.eventLocation);
+            mEventEntryDistance = (TextView) mItemView.findViewById(R.id.eventDistance);
+        }
+    }
+
+    private ArrayList<Event> mEventEntries;
+
+    public RecyclerViewAdapter(ArrayList<Event> givenEntries) {
+        mEventEntries = givenEntries;
     }
 
     @Override
     public EventHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View mListView = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_entry, parent, false);
-        EventHolder mEntriesHolder = new EventHolder(mListView);
-        return mEntriesHolder;
+        View listView = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_entry, parent, false);
+        return new EventHolder(listView);
     }
 
     @Override
     public void onBindViewHolder(EventHolder holder, int position) {
-        holder.mEventEntryName.setText(mCurrentEntries.get(position).getName());
-        holder.mEventEntryLocation.setText(mCurrentEntries.get(position).getLocation());
-        holder.mEventEntryDistance.setText(Double.toString(mCurrentEntries.get(position).getDistance()));
+        holder.mEventEntryName.setText(mEventEntries.get(position).getName());
+        holder.mEventEntryLocation.setText(mEventEntries.get(position).getLocation());
+        holder.mEventEntryDistance.setText(Double.toString(mEventEntries.get(position).getDistance()));
     }
 
     @Override
     public int getItemCount() {
-        return mCurrentEntries.size();
+        return mEventEntries.size();
     }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
-
-    public static class EventHolder extends RecyclerView.ViewHolder{
-        CardView mEventEntryHolder;
-        TextView mEventEntryName, mEventEntryLocation, mEventEntryDistance;
-
-        public EventHolder(View mItemView){
-            super(mItemView);
-            mEventEntryHolder = (CardView)mItemView.findViewById(R.id.eventEntry);
-            mEventEntryName = (TextView)mItemView.findViewById(R.id.eventName);
-            mEventEntryLocation = (TextView)mItemView.findViewById(R.id.eventLocation);
-            mEventEntryDistance = (TextView)mItemView.findViewById(R.id.eventDistance);
-        }
-    }
+}
