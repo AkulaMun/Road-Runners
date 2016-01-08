@@ -129,24 +129,13 @@ public class ParseController {
         mRequestQueue.add(JSONrequest);
     }
 
-    public void saveEvent(Event event){
-        String mURL = "https://api.parse.com/1/classes/Event";
-        final JSONObject eventJSON = new JSONObject();
-        try{
-            eventJSON.put("name", event.getName());
-            eventJSON.put("location", event.getLocation());
-            eventJSON.put("distance", event.getDistance());
-            eventJSON.put("organizer", event.getOrganizer());
-            eventJSON.put("date", event.getDate());
-        }
-        catch(JSONException e){
-            Log.e("JSON Failure", "Save data corrupted!");
-        }
+    public void saveEvent(JSONObject eventJSON){
+        String URL = "https://api.parse.com/1/classes/Event";
 
-        JsonObjectRequest mRequest = new JsonObjectRequest(Request.Method.POST, mURL, eventJSON, new Response.Listener<JSONObject>() {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, eventJSON, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-
+                //TODO: Create Alert Box for Successful Save!
             }
         }, new Response.ErrorListener() {
             @Override
@@ -163,6 +152,8 @@ public class ParseController {
                 return params;
             }
         };
-        mRequestQueue.add(mRequest);
+
+        try{Log.e("Request URL: ", request.getBody().toString());}catch(Exception e){}
+        mRequestQueue.add(request);
     }
 }

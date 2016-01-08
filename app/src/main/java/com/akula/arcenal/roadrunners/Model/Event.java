@@ -1,5 +1,11 @@
 package com.akula.arcenal.roadrunners.Model;
 
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -34,6 +40,27 @@ public class Event {
         mID = mName.substring(0, 3) + mLocation.substring(0, 3) + mOrganizer.substring(0, 3) + "-" + mDate.toString() + distIDComponent;
     }
     */
+
+    public JSONObject JSONifyEvent(){
+        final JSONObject eventJSON = new JSONObject();
+        try{
+            eventJSON.put("name", mName);
+            eventJSON.put("location", mLocation);
+            eventJSON.put("distance", mDistance);
+            eventJSON.put("organizer", mOrganizer);
+
+            SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            String isoDateString = isoDateFormat.format(mDate);
+            JSONObject dateDataObject = new JSONObject();
+            dateDataObject.put("__type", "Date");
+            dateDataObject.put("iso", isoDateString);
+            eventJSON.put("date", dateDataObject);
+        }
+        catch(JSONException e){
+            Log.e("JSON Failure", "Save data corrupted!");
+        }
+        return eventJSON;
+    }
 
 
     public String getID(){

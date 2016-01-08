@@ -3,12 +3,14 @@ package com.akula.arcenal.roadrunners;
 import android.content.Context;
 import android.test.AndroidTestCase;
 import android.test.InstrumentationTestCase;
+import android.util.Log;
 
 import com.akula.arcenal.roadrunners.Controller.EventController;
 import com.akula.arcenal.roadrunners.Controller.ParseController;
 import com.akula.arcenal.roadrunners.Model.Event;
 import com.parse.Parse;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -48,7 +50,7 @@ public class ApplicationTest extends AndroidTestCase {
     }
 
 
-
+/*
     public void testParseController(){
         //TEST 2: PARSECONTROLLER DIRECT INVOKE -> SAVING EVENT
         ParseController parseController = ParseController.getInstance(getContext());
@@ -57,5 +59,15 @@ public class ApplicationTest extends AndroidTestCase {
         Event test = new Event("Viper's Nest", "Kuala Lumpur", "Viper Venom Pakour", 42, referenceCalendar.getTime());
 
         parseController.saveEvent(test);
+    }
+    */
+
+    public void testDate(){
+        GregorianCalendar referenceCalendar = new GregorianCalendar(2016, 10, 22, 11, 30);
+        GregorianCalendar testDate = new GregorianCalendar(2017, 10, 13, 10, 55);
+        String dateString = referenceCalendar.getTime().toString();
+        SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MMMM-dd'T'HH:mm:ss.SSS'Z'");
+        String formatted = isoDateFormat.format(testDate.getTime());
+        Log.e("????", formatted);
     }
 }

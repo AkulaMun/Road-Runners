@@ -55,26 +55,7 @@ public class EventController {
         });
     }
 
-    //tested, proven method. Uses old school idiot way......
-    public static Date dateFormat(String dateString){
-        Date result = null;
-        dateString = dateString.replace("{", "");
-        dateString = dateString.replace("}", "");
-        dateString = dateString.replace("\"", "");
-        dateString = dateString.replace("_type:Date,iso:", "");
-        dateString = dateString.replace("T", " ");
-        dateString = dateString.substring(0, 16);
-        SimpleDateFormat ISOdateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
-        try {
-            result = ISOdateFormat.parse(dateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    //Improvement... Experimental
+    //Improvement... Working
     public static Date dateFormat(JSONObject dateObject){
         Date resultDate = null;
         SimpleDateFormat ISOdateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
