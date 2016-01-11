@@ -11,16 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.akula.arcenal.roadrunners.Controller.EventController;
-import com.akula.arcenal.roadrunners.Controller.ParseController;
-import com.akula.arcenal.roadrunners.Model.Event;
 import com.akula.arcenal.roadrunners.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
 
 /**
  * Created by Arcenal on 6/1/2016.

@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Road Runners</string>
-    <string name="app_title">Road Runners</string>
+    <string name="screen_title">Road Runners</string>
+    <string name="create_event">Create New Event</string>
+    <string name="event_detail_name_label">Event Name: </string>
+    <string name="event_detail_location_label">Event Location: </string>
+    <string name="event_detail_distance_label">Distance: </string>
+    <string name="event_detail_date_label">Event Date :</string>
+    <string name="event_detail_time_label">Event Time :</string>
+    <string name="event_detail_organizer_label">Event Organizer :</string>
+    <string name="event_detail_participants_label">Participants :</string>
 </resources>

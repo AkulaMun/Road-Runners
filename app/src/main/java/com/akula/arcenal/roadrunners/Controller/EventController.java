@@ -3,6 +3,7 @@ package com.akula.arcenal.roadrunners.Controller;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.akula.arcenal.roadrunners.Model.Event;
 import com.akula.arcenal.roadrunners.View.EventListFragment;
@@ -43,16 +44,24 @@ public class EventController {
 
                     int eventsSize = eventResultJSONArray.length();
                     for(int i = 0; i < eventsSize; i ++){
+                        //VULNERABLE CODE SECTION. CRASHES HERE IF DATA IS INCOMPLETE. DEFENSIVE PROGRAMMING REQUIRED.
                         JSONObject event = eventResultJSONArray.getJSONObject(i);
                         events.add(new Event(event.getString("name"), event.getString("location"), event.getString("organizer"), event.getDouble("distance"), dateFormat((JSONObject)event.get("date"))));
                     }
+
                     listener.onOperationComplete(new RecyclerViewAdapter(events), null);
+
                 }
                 catch(JSONException e){
                     listener.onOperationComplete(null, e);
                 }
             }
         });
+    }
+
+    public static void saveEvent(Event event, final OnOperationCompleteListener listener){
+        ParseController parseController = ParseController.getInstance(sApplicationContext);
+        parseController.saveEvent(event.JSONifyEvent());
     }
 
     //Improvement... Working
