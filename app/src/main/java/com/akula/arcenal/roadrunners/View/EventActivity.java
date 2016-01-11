@@ -1,23 +1,20 @@
 package com.akula.arcenal.roadrunners.View;
 
 
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
 
 import com.akula.arcenal.roadrunners.R;
 
 public class EventActivity extends AppCompatActivity {
 
-    private FrameLayout mFragmentContainer;
     private EventListFragment mEventListFragment;
     private EventDetailFragment mEventDetailFragment;
-    private FragmentTransaction mFragmentTransaction;
     private MenuItem mCreateEventMenuItem;
 
     @Override
@@ -25,15 +22,13 @@ public class EventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
-        mFragmentContainer = (FrameLayout)findViewById(R.id.fragment_container);
-
         mEventListFragment = new EventListFragment();
 
-        mFragmentTransaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
-        mFragmentTransaction.add(R.id.fragment_container, mEventListFragment);
+        fragmentTransaction.add(R.id.fragment_container, mEventListFragment);
 
-        mFragmentTransaction.commit();
+        fragmentTransaction.commit();
     }
 
 
@@ -45,6 +40,7 @@ public class EventActivity extends AppCompatActivity {
         mCreateEventMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                switchToCreateFragment(item);
                 return false;
             }
         });
@@ -52,7 +48,23 @@ public class EventActivity extends AppCompatActivity {
     }
 
     private void switchToCreateFragment(MenuItem clickedItem){
-        mFragmentTransaction.remove(mEventListFragment);
-        mFragmentTransaction.add(R.id.fragment_container, mEventDetailFragment);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.remove(mEventListFragment);
+        mEventDetailFragment = EventDetailFragment.newInstance();
+        mEventDetailFragment.setParentActivity(this);
+        fragmentTransaction.replace(R.id.fragment_container, mEventDetailFragment);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    public void pickDate(View v){
+        DatePickerFragment datePick = new DatePickerFragment();
+        datePick.setParentActivity(this);
+        datePick.show(getSupportFragmentManager(), "pickDate");
+    }
+
+    public void relayDate(View v, int year, int month, int dayOfMonth){
+        mEventDetailFragment.setDate(year, month, dayOfMonth);
     }
 }

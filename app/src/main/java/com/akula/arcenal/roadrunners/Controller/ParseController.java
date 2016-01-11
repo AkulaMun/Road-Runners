@@ -2,7 +2,6 @@ package com.akula.arcenal.roadrunners.Controller;
 import android.content.Context;
 import android.util.Log;
 
-import com.akula.arcenal.roadrunners.Model.Event;
 import com.android.volley.Cache;
 import com.android.volley.Network;
 import com.android.volley.Request;
@@ -152,8 +151,6 @@ public class ParseController {
                 return params;
             }
         };
-
-        try{Log.e("Request URL: ", request.getBody().toString());}catch(Exception e){}
         mRequestQueue.add(request);
     }
 }

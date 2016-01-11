@@ -4,18 +4,12 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application
-        android:name=".RoadRunnersApplication"
+
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <meta-data
-            android:name="com.parse.APPLICATION_ID"
-            android:value="X92n2Y7bH8mB3sjTDSe6vrNMIfYVEIrSiipWSiO2" />
-        <meta-data
-            android:name="com.parse.CLIENT_KEY"
-            android:value="lo9StIG2u95JM7pvVJKKxsLpIpywvByAaPJ5KL1j" />
         <activity android:name=".View.EventActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,5 +18,5 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
+    <!--android:name=".RoadRunnersApplication"-->

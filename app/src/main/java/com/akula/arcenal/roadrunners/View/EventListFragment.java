@@ -20,7 +20,6 @@ import com.akula.arcenal.roadrunners.R;
 public class EventListFragment extends Fragment {
 
     private Context mParentContext;
-
     private RecyclerView mEventListView;
     private LinearLayoutManager mEventListManager;
 
@@ -29,13 +28,10 @@ public class EventListFragment extends Fragment {
         return eventListFragment;
     }
 
-
     @Override
     public void onAttach(Context parent){
         super.onAttach(parent);
-
         setParentContext(parent);
-
     }
 
     @Override
@@ -44,7 +40,7 @@ public class EventListFragment extends Fragment {
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.event_list, container, false);
         mEventListView = (RecyclerView)layout.findViewById(R.id.event_listing);
-        LinearLayoutManager listLayoutManager = new LinearLayoutManager(this.mParentContext);
+        LinearLayoutManager listLayoutManager = new LinearLayoutManager(mParentContext);
         mEventListView.setLayoutManager(listLayoutManager);
 
         listAllEvents();
