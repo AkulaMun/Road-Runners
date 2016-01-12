@@ -25,11 +25,9 @@ public class EventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_event);
 
         mEventListFragment = new EventListFragment();
-
+        mEventListFragment.setParentActivity(this);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
         fragmentTransaction.add(R.id.fragment_container, mEventListFragment);
-
         fragmentTransaction.commit();
     }
 
@@ -83,7 +81,7 @@ public class EventActivity extends AppCompatActivity {
     public void displayEventDetails(Event targetEvent){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.remove(mEventListFragment);
-        mEventDetailFragment = EventDetailFragment.newInstance();
+        mEventDetailFragment = EventDetailFragment.newInstance(targetEvent);
         mEventDetailFragment.setParentActivity(this);
         fragmentTransaction.replace(R.id.fragment_container, mEventDetailFragment);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);

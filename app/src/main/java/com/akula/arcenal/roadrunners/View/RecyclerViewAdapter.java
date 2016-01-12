@@ -17,7 +17,8 @@ import java.util.ArrayList;
 /**
  * Created by Arcenal on 5/1/2016.
  */
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.EventHolder> implements RecyclerViewAdapter.OnEventEntryClickListener{
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.EventHolder>{
+
     public interface OnEventEntryClickListener{
         void OnEventClick(int position);
     }
@@ -35,17 +36,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             mEventDate = (TextView) itemView.findViewById(R.id.event_date);
             mEventEntry = (CardView)itemView.findViewById(R.id.event_entry);
         }
+
     }
     //ABOVE IS VIEW HOLDER (INDIVIDUAL ENTRY) CLASS. BELOW IS ADAPTER CLASS.
     private ArrayList<Event> mEventEntries;
-    private OnEventEntryClickListener mAdapterClickListener;
-    public RecyclerViewAdapter(ArrayList<Event> givenEntries) {
+    private EventActivity mHostActivity;
+    public RecyclerViewAdapter(ArrayList<Event> givenEntries, EventActivity givenHostActivity){
         mEventEntries = givenEntries;
-    }
-
-    @Override
-    public void OnEventClick(int position) {
-
+        mHostActivity = givenHostActivity;
     }
 
     @Override
@@ -55,7 +53,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(EventHolder holder, int position) {
+    public void onBindViewHolder(EventHolder holder, final int position) {
         holder.mEventEntryName.setText(mEventEntries.get(position).getName());
         holder.mEventEntryLocation.setText(mEventEntries.get(position).getLocation());
         holder.mEventEntryDistance.setText(Double.toString(mEventEntries.get(position).getDistance()) + " KM");
@@ -64,7 +62,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.mEventEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OnEventClick(position);
+                mHostActivity.displayEventDetails(mEventEntries.get(position));
             }
         });
     }

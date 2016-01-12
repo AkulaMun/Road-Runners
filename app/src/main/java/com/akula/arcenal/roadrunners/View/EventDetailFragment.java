@@ -1,6 +1,5 @@
 package com.akula.arcenal.roadrunners.View;
 
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.method.KeyListener;
@@ -94,7 +93,7 @@ public class EventDetailFragment extends Fragment {
             });
         }
         else{
-            mEventActionButton.setText("Update Event");
+            mEventActionButton.setText("Update Event?");
             mEventActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -166,7 +165,7 @@ public class EventDetailFragment extends Fragment {
         mDateYear = year;
         mDateMonth = month;
         mDateDay = dayOfMonth;
-        combiner();
+        dateTimeCombiner();
     }
 
     public void setTime(int hourOfDay, int minute){
@@ -174,12 +173,19 @@ public class EventDetailFragment extends Fragment {
         mEventDetailTimeInput.setText(timeString);
         mDateHour = hourOfDay;
         mDateMinute = minute;
-        combiner();
+        dateTimeCombiner();
     }
 
-    private void combiner(){
+    private void dateTimeCombiner(){
         if(mDateYear != 99 && mDateMonth != 99 && mDateDay != 99 && mDateHour != 99 && mDateMinute != 99){
             mEventDate = new GregorianCalendar(mDateYear, mDateMonth, mDateDay, mDateHour, mDateMinute).getTime();
         }
+    }
+
+    private void checkForUpdate(){
+        //IMPLEMENT CHECKS FOR OWNERSHIP OF EVENT ENTRY ONCE USER LOGIN IS IMPLEMENTED
+        mEventActionButton.setText("(Allowed) Update Event!");
+        mNameInput.setKeyListener((KeyListener)mNameInput.getTag());
+        mLocationInput.setKeyListener((KeyListener)mLocationInput.getTag());
     }
 }

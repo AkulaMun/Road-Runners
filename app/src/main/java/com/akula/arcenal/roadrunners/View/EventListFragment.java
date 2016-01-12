@@ -61,7 +61,7 @@ public class EventListFragment extends Fragment {
             mEventListView.setLayoutManager(mEventListManager);
 
             EventController.setContext(mParentContext);
-            EventController.listAllEvents(new EventController.OnOperationCompleteListener() {
+            EventController.listAllEvents(mParentActivity, new EventController.OnOperationCompleteListener() {
                 @Override
                 public void onOperationComplete(RecyclerViewAdapter adapter, Exception error) {
                     if(adapter != null){

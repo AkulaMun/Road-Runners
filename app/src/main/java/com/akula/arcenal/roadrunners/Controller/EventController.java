@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.akula.arcenal.roadrunners.Model.Event;
+import com.akula.arcenal.roadrunners.View.EventActivity;
 import com.akula.arcenal.roadrunners.View.RecyclerViewAdapter;
 
 import org.json.JSONArray;
@@ -31,7 +32,7 @@ public class EventController {
         sApplicationContext = givenContext;
     }
 
-    public static void listAllEvents(final OnOperationCompleteListener listener){
+    public static void listAllEvents(final EventActivity hostActivity, final OnOperationCompleteListener listener){
         ParseController parseControl = ParseController.getInstance(sApplicationContext);
         parseControl.list("Event", new ParseController.OnReadCompleteListener() {
             @Override
@@ -49,7 +50,7 @@ public class EventController {
                             events.add(eventObject);
 
                         }
-                        listener.onOperationComplete(new RecyclerViewAdapter(events), null);
+                        listener.onOperationComplete(new RecyclerViewAdapter(events, hostActivity), null);
                     } catch (JSONException e) {
                         listener.onOperationComplete(null, e);
                     }
