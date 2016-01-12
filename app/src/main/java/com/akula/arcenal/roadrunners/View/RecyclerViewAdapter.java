@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.akula.arcenal.roadrunners.Controller.EventController;
 import com.akula.arcenal.roadrunners.Model.Event;
 import com.akula.arcenal.roadrunners.R;
 
@@ -18,23 +19,25 @@ import java.util.ArrayList;
  */
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.EventHolder> {
 
-    public static class EventHolder extends RecyclerView.ViewHolder {
-        private CardView mEventEntryHolder;
-        private TextView mEventEntryName, mEventEntryLocation, mEventEntryDistance, mEventOrganizer;//Add in date once you get saving working
+    public static class EventHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private TextView mEventEntryName, mEventEntryLocation, mEventEntryDistance, mEventOrganizer, mEventDate;
 
         public EventHolder(View itemView) {
             super(itemView);
-            mEventEntryHolder = (CardView) itemView.findViewById(R.id.event_entry);
             mEventEntryName = (TextView) itemView.findViewById(R.id.event_name);
             mEventEntryLocation = (TextView) itemView.findViewById(R.id.event_location);
             mEventEntryDistance = (TextView) itemView.findViewById(R.id.event_distance);
             mEventOrganizer = (TextView) itemView.findViewById(R.id.event_organizer);
-            //mEventDate = (TextView) itemView.findViewById(R.id.event_date)
+            mEventDate = (TextView) itemView.findViewById(R.id.event_date);
+        }
+
+        @Override
+        public void onClick(View v) {
+
         }
     }
-
+    //ABOVE IS VIEW HOLDER (INDIVIDUAL ENTRY) CLASS. BELOW IS ADAPTER CLASS.
     private ArrayList<Event> mEventEntries;
-
     public RecyclerViewAdapter(ArrayList<Event> givenEntries) {
         mEventEntries = givenEntries;
     }
@@ -51,6 +54,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.mEventEntryLocation.setText(mEventEntries.get(position).getLocation());
         holder.mEventEntryDistance.setText(Double.toString(mEventEntries.get(position).getDistance()) + " KM");
         holder.mEventOrganizer.setText(mEventEntries.get(position).getOrganizer());
+        holder.mEventDate.setText(EventController.getDateAsString(mEventEntries.get(position).getDate()));
     }
 
     @Override

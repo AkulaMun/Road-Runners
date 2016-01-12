@@ -67,4 +67,14 @@ public class EventActivity extends AppCompatActivity {
     public void relayDate(View v, int year, int month, int dayOfMonth){
         mEventDetailFragment.setDate(year, month, dayOfMonth);
     }
+
+    public void pickTime(View v){
+        TimePickerFragment timePick = new TimePickerFragment();
+        timePick.setParentActivity(this);
+        timePick.show(getSupportFragmentManager(), "pickTime");
+    }
+
+    public void relayTime(View v, int hourOfDay, int minute){
+        mEventDetailFragment.setTime(hourOfDay, minute);
+    }
 }

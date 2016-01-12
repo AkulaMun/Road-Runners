@@ -1,6 +1,5 @@
 package com.akula.arcenal.roadrunners.View;
 
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -28,7 +27,12 @@ public class EventDetailFragment extends Fragment {
     private TextView mEventDetailDateInput, mEventDetailTimeInput;
     private Button mEventActionButton;
 
-    private Date mEventDate;
+    private Date mEventDate = null;
+    private int mDateYear = 99;
+    private int mDateMonth = 99;
+    private int mDateDay = 99;
+    private int mDateHour = 99;
+    private int mDateMinute = 99;
 
     public static EventDetailFragment newInstance(){
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
@@ -49,7 +53,7 @@ public class EventDetailFragment extends Fragment {
         mDistanceInput = (EditText)layout.findViewById(R.id.event_detail_distance_input);
         mOrganizerInput = (EditText)layout.findViewById(R.id.event_detail_organizer_input);
         mEventActionButton = (Button)layout.findViewById(R.id.event_detail_action_button);
-
+        mEventActionButton.setText("Create Event");
         mEventActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,7 +67,16 @@ public class EventDetailFragment extends Fragment {
             public void onClick(View v) {
                 if(mParentActivity != null){
                     mParentActivity.pickDate(v);
-                    Log.e("Click", "Click Detected!");
+                }
+            }
+        });
+
+        mEventDetailTimeInput = (TextView)layout.findViewById(R.id.event_detail_time_input);
+        mEventDetailTimeInput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mParentActivity != null){
+                    mParentActivity.pickTime(v);
                 }
             }
         });
@@ -73,8 +86,7 @@ public class EventDetailFragment extends Fragment {
 
     private void saveEvent(View v){
         if(checkData() == true) {
-            GregorianCalendar referenceCalendar = new GregorianCalendar(2017, 00, 30, 00, 00);
-            Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), referenceCalendar.getTime());
+            Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), mEventDate);
             EventController.saveEvent(newEvent);
         }
     }
@@ -85,74 +97,48 @@ public class EventDetailFragment extends Fragment {
 
         if(mNameInput.getText().toString().length() == 0){
             valid = false;
-        }
-
-        if(valid == true && mLocationInput.getText().toString().length() == 0){
+        }else if(mLocationInput.getText().toString().length() == 0){
+            valid = false;
+        }else if(mOrganizerInput.getText().toString().length() == 0){
+            valid = false;
+        }else if(mDistanceInput.getText().toString().length() == 0) {
+            valid = false;
+        }else if(mEventDate == null){
             valid = false;
         }
 
-        if(valid == true && mOrganizerInput.getText().toString().length() == 0){
-            valid = false;
+        try{
+            Double.parseDouble(mDistanceInput.getText().toString());
         }
-
-        if(valid == true && mDistanceInput.getText().toString().length() == 0){
-            try{
-                Double.parseDouble(mDistanceInput.getText().toString());
-            }
-            catch(Exception e){
-                //TODO set up a better way of handling error
-                valid = false;
-                Log.e("Number Format Invalid!", "Failed to Parse Distance into a double!");
-            }
+        catch(Exception e){
+            //TODO set up a better way of handling error
+            valid = false;
+            Log.e("Number Format Invalid!", "Failed to Parse Distance into a double!");
         }
         //TODO check date and time validity
         return valid;
     }
 
     public void setDate(int year, int month, int dayOfMonth){
-        mEventDetailDateInput.setText(Integer.toString(year) + " / " + parseMonth(month) + " / " + Integer.toString(dayOfMonth));
+        String dateString = Integer.toString(dayOfMonth) + " / " + EventController.parseMonth(month) + " / " + Integer.toString(year);
+        mEventDetailDateInput.setText(dateString);
+        mDateYear = year;
+        mDateMonth = month;
+        mDateDay = dayOfMonth;
+        combiner();
     }
 
-    private String parseMonth(int month){
-        String monthInString = "ERR";
-        switch(month){
-            case 0:
-                monthInString = "JAN";
-                break;
-            case 1:
-                monthInString = "FEB";
-                break;
-            case 2:
-                monthInString = "MAR";
-                break;
-            case 3:
-                monthInString = "APR";
-                break;
-            case 4:
-                monthInString = "MAY";
-                break;
-            case 5:
-                monthInString = "JUN";
-                break;
-            case 6:
-                monthInString = "JUL";
-                break;
-            case 7:
-                monthInString = "AUG";
-                break;
-            case 8:
-                monthInString = "SEP";
-                break;
-            case 9:
-                monthInString = "OCT";
-                break;
-            case 10:
-                monthInString = "NOV";
-                break;
-            case 11:
-                monthInString = "DEC";
-                break;
+    public void setTime(int hourOfDay, int minute){
+        String timeString = Integer.toString(hourOfDay) + " : " + Integer.toString(minute);
+        mEventDetailTimeInput.setText(timeString);
+        mDateHour = hourOfDay;
+        mDateMinute = minute;
+        combiner();
+    }
+
+    private void combiner(){
+        if(mDateYear != 99 && mDateMonth != 99 && mDateDay != 99 && mDateHour != 99 && mDateMinute != 99){
+            mEventDate = new GregorianCalendar(mDateYear, mDateMonth, mDateDay, mDateHour, mDateMinute).getTime();
         }
-        return monthInString;
     }
 }

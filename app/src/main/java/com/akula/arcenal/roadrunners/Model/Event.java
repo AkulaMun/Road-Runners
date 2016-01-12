@@ -7,7 +7,9 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created by Arcenal on 6/1/2016.
@@ -25,21 +27,6 @@ public class Event {
         mDate = givenDate;
         mOrganizer = givenOrganizer;
     }
-
-    /*
-
-    private void IDGenerate(){
-        String distIDComponent;
-        if(mDistance < 0){
-            distIDComponent = "0" + Double.toString(mDistance);
-        }
-        else{
-            distIDComponent = Double.toString(mDistance).substring(0, 2);
-        }
-
-        mID = mName.substring(0, 3) + mLocation.substring(0, 3) + mOrganizer.substring(0, 3) + "-" + mDate.toString() + distIDComponent;
-    }
-    */
 
     public JSONObject JSONifyEvent(){
         final JSONObject eventJSON = new JSONObject();
@@ -61,7 +48,6 @@ public class Event {
         }
         return eventJSON;
     }
-
 
     public String getID(){
         return mID;
@@ -99,6 +85,7 @@ public class Event {
         return mDate;
     }
 
+
     public void setOrganizer(String givenOrganizer){
         mOrganizer = givenOrganizer;
     }
@@ -115,4 +102,17 @@ public class Event {
         return mParticipants;
     }
 
+        /*
+    private void IDGenerate(){
+        String distIDComponent;
+        if(mDistance < 0){
+            distIDComponent = "0" + Double.toString(mDistance);
+        }
+        else{
+            distIDComponent = Double.toString(mDistance).substring(0, 2);
+        }
+
+        mID = mName.substring(0, 3) + mLocation.substring(0, 3) + mOrganizer.substring(0, 3) + "-" + mDate.toString() + distIDComponent;
+    }
+    */
 }
