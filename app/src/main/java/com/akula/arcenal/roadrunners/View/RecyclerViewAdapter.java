@@ -17,9 +17,13 @@ import java.util.ArrayList;
 /**
  * Created by Arcenal on 5/1/2016.
  */
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.EventHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.EventHolder> implements RecyclerViewAdapter.OnEventEntryClickListener{
+    public interface OnEventEntryClickListener{
+        void OnEventClick(int position);
+    }
 
-    public static class EventHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public static class EventHolder extends RecyclerView.ViewHolder{
+        private CardView mEventEntry;
         private TextView mEventEntryName, mEventEntryLocation, mEventEntryDistance, mEventOrganizer, mEventDate;
 
         public EventHolder(View itemView) {
@@ -29,17 +33,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             mEventEntryDistance = (TextView) itemView.findViewById(R.id.event_distance);
             mEventOrganizer = (TextView) itemView.findViewById(R.id.event_organizer);
             mEventDate = (TextView) itemView.findViewById(R.id.event_date);
-        }
-
-        @Override
-        public void onClick(View v) {
-
+            mEventEntry = (CardView)itemView.findViewById(R.id.event_entry);
         }
     }
     //ABOVE IS VIEW HOLDER (INDIVIDUAL ENTRY) CLASS. BELOW IS ADAPTER CLASS.
     private ArrayList<Event> mEventEntries;
+    private OnEventEntryClickListener mAdapterClickListener;
     public RecyclerViewAdapter(ArrayList<Event> givenEntries) {
         mEventEntries = givenEntries;
+    }
+
+    @Override
+    public void OnEventClick(int position) {
+
     }
 
     @Override
@@ -55,6 +61,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.mEventEntryDistance.setText(Double.toString(mEventEntries.get(position).getDistance()) + " KM");
         holder.mEventOrganizer.setText(mEventEntries.get(position).getOrganizer());
         holder.mEventDate.setText(EventController.getDateAsString(mEventEntries.get(position).getDate()));
+        holder.mEventEntry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OnEventClick(position);
+            }
+        });
     }
 
     @Override

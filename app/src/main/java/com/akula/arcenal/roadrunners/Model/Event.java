@@ -49,6 +49,10 @@ public class Event {
         return eventJSON;
     }
 
+    public void setID(String givenID){
+        mID = givenID;
+    }
+
     public String getID(){
         return mID;
     }

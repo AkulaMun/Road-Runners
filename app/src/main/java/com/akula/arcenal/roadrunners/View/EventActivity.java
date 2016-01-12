@@ -5,10 +5,12 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.akula.arcenal.roadrunners.Model.Event;
 import com.akula.arcenal.roadrunners.R;
 
 public class EventActivity extends AppCompatActivity {
@@ -76,5 +78,16 @@ public class EventActivity extends AppCompatActivity {
 
     public void relayTime(View v, int hourOfDay, int minute){
         mEventDetailFragment.setTime(hourOfDay, minute);
+    }
+
+    public void displayEventDetails(Event targetEvent){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.remove(mEventListFragment);
+        mEventDetailFragment = EventDetailFragment.newInstance();
+        mEventDetailFragment.setParentActivity(this);
+        fragmentTransaction.replace(R.id.fragment_container, mEventDetailFragment);
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }

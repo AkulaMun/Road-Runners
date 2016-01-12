@@ -22,7 +22,7 @@ import java.util.GregorianCalendar;
  */
 public class EventController {
     public interface OnOperationCompleteListener{
-        public void onOperationComplete(RecyclerViewAdapter adapter, Exception error);
+        void onOperationComplete(RecyclerViewAdapter adapter, Exception error);
     };
 
     private static Context sApplicationContext;
@@ -36,19 +36,27 @@ public class EventController {
         parseControl.list("Event", new ParseController.OnReadCompleteListener() {
             @Override
             public void onReadComplete(JSONObject resultObject, Exception ex) {
-                try{
-                    JSONArray eventResultJSONArray = resultObject.getJSONArray("results");
-                    ArrayList<Event> events = new ArrayList<>();
-                    int eventsSize = eventResultJSONArray.length();
-                    for(int i = 0; i < eventsSize; i ++){
-                        //VULNERABLE CODE SECTION. CRASHES HERE IF DATA IS INCOMPLETE. DEFENSIVE PROGRAMMING REQUIRED.
-                        JSONObject event = eventResultJSONArray.getJSONObject(i);
-                        events.add(new Event(event.getString("name"), event.getString("location"), event.getString("organizer"), event.getDouble("distance"), dateFormat((JSONObject)event.get("date"))));
+                if(resultObject != null) {
+                    try {
+                        JSONArray eventResultJSONArray = resultObject.getJSONArray("results");
+                        ArrayList<Event> events = new ArrayList<>();
+                        int eventsSize = eventResultJSONArray.length();
+                        for (int i = 0; i < eventsSize; i++) {
+                            //VULNERABLE CODE SECTION. CRASHES HERE IF DATA IS INCOMPLETE. DEFENSIVE PROGRAMMING REQUIRED.
+                            JSONObject event = eventResultJSONArray.getJSONObject(i);
+                            Event eventObject = new Event(event.getString("name"), event.getString("location"), event.getString("organizer"), event.getDouble("distance"), dateFormat((JSONObject) event.get("date")));
+                            eventObject.setID(event.getString("objectId"));
+                            events.add(eventObject);
+
+                        }
+                        listener.onOperationComplete(new RecyclerViewAdapter(events), null);
+                    } catch (JSONException e) {
+                        listener.onOperationComplete(null, e);
                     }
-                    listener.onOperationComplete(new RecyclerViewAdapter(events), null);
                 }
-                catch(JSONException e){
-                    listener.onOperationComplete(null, e);
+
+                if(ex != null){
+                    //error handling here
                 }
             }
         });
@@ -156,5 +164,13 @@ public class EventController {
 
         String dateString = dayInWeekString + " " + eventDate.get(Calendar.DAY_OF_MONTH) + " / " + parseMonth(eventDate.get(Calendar.MONTH)) + " / " + eventDate.get(Calendar.YEAR);
         return dateString;
+    }
+
+    public static String getTimeAsString(Date givenDate){
+        GregorianCalendar eventDate = new GregorianCalendar();
+        eventDate.setTime(givenDate);
+
+        String timeString = Integer.toString(eventDate.get(Calendar.HOUR_OF_DAY)) + " : " + Integer.toString(Calendar.MINUTE);
+        return timeString;
     }
 }

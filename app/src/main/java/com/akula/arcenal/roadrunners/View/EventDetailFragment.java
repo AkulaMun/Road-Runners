@@ -1,7 +1,9 @@
 package com.akula.arcenal.roadrunners.View;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +24,8 @@ import java.util.GregorianCalendar;
  */
 public class EventDetailFragment extends Fragment {
 
-    private EventActivity mParentActivity;
+    private EventActivity mParentActivity = null;
+    private Event mTargetEvent;
     private EditText mNameInput, mDistanceInput, mOrganizerInput, mLocationInput;
     private TextView mEventDetailDateInput, mEventDetailTimeInput;
     private Button mEventActionButton;
@@ -36,6 +39,12 @@ public class EventDetailFragment extends Fragment {
 
     public static EventDetailFragment newInstance(){
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
+        return eventDetailFragment;
+    }
+
+    public static EventDetailFragment newInstance(Event targetEvent){
+        EventDetailFragment eventDetailFragment = new EventDetailFragment();
+        eventDetailFragment.mTargetEvent = targetEvent;
         return eventDetailFragment;
     }
 
@@ -53,33 +62,65 @@ public class EventDetailFragment extends Fragment {
         mDistanceInput = (EditText)layout.findViewById(R.id.event_detail_distance_input);
         mOrganizerInput = (EditText)layout.findViewById(R.id.event_detail_organizer_input);
         mEventActionButton = (Button)layout.findViewById(R.id.event_detail_action_button);
-        mEventActionButton.setText("Create Event");
-        mEventActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveEvent(v);
-            }
-        });
-
         mEventDetailDateInput = (TextView)layout.findViewById(R.id.event_detail_date_input);
-        mEventDetailDateInput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mParentActivity != null){
-                    mParentActivity.pickDate(v);
-                }
-            }
-        });
-
         mEventDetailTimeInput = (TextView)layout.findViewById(R.id.event_detail_time_input);
-        mEventDetailTimeInput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mParentActivity != null){
-                    mParentActivity.pickTime(v);
+
+        if(mTargetEvent == null){
+            mEventActionButton.setText("Create Event");
+            mEventActionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    saveEvent(v);
                 }
-            }
-        });
+            });
+
+            //Time and Date Pickers, communicating with Activity, across fragments.
+            mEventDetailDateInput.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mParentActivity != null) {
+                        mParentActivity.pickDate(v);
+                    }
+                }
+            });
+
+            mEventDetailTimeInput.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(mParentActivity != null){
+                        mParentActivity.pickTime(v);
+                    }
+                }
+            });
+        }
+        else{
+            mEventActionButton.setText("Update Event");
+            mEventActionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+            //To make it reeditable
+            //textView.setTag(textView.getKeyListener());
+            //textView.setKeyListener((KeyListener)textView.getTag());
+
+            //To make it uneditable
+            mNameInput.setTag(mNameInput.getKeyListener());
+            mNameInput.setKeyListener(null);
+            mNameInput.setText(mTargetEvent.getName());
+            mLocationInput.setTag(mLocationInput.getKeyListener());
+            mLocationInput.setKeyListener(null);
+            mLocationInput.setText(mTargetEvent.getLocation());
+            mDistanceInput.setTag(mDistanceInput.getKeyListener());
+            mDistanceInput.setKeyListener(null);
+            mDistanceInput.setText(Double.toString(mTargetEvent.getDistance()));
+            mOrganizerInput.setTag(mOrganizerInput.getKeyListener());
+            mOrganizerInput.setKeyListener(null);
+            mOrganizerInput.setText(mTargetEvent.getOrganizer());
+            mEventDetailDateInput.setText(EventController.getDateAsString(mTargetEvent.getDate()));
+            mEventDetailTimeInput.setText(EventController.getTimeAsString(mTargetEvent.getDate()));
+        }
 
         return layout;
     };

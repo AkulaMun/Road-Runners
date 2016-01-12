@@ -18,7 +18,7 @@ import com.akula.arcenal.roadrunners.R;
  * Created by Arcenal on 6/1/2016.
  */
 public class EventListFragment extends Fragment {
-
+    private EventActivity mParentActivity = null;
     private Context mParentContext;
     private RecyclerView mEventListView;
     private LinearLayoutManager mEventListManager;
@@ -51,6 +51,9 @@ public class EventListFragment extends Fragment {
     public void setParentContext(Context givenContext){
         mParentContext = givenContext;
     }
+    public void setParentActivity(EventActivity givenHost){
+        mParentActivity = givenHost;
+    }
 
     private void listAllEvents(){
         if(mParentContext != null){
@@ -62,6 +65,7 @@ public class EventListFragment extends Fragment {
                 @Override
                 public void onOperationComplete(RecyclerViewAdapter adapter, Exception error) {
                     if(adapter != null){
+                        mEventListView.addItemDecoration(new SimpleDividerItemDecoration(mParentContext));
                         mEventListView.setAdapter(adapter);
                     }
                     if(error != null){
