@@ -1,4 +1,4 @@
-package com.akula.arcenal.roadrunners.View;
+package com.akula.arcenal.roadrunners.view;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -12,7 +12,7 @@ import java.util.Calendar;
  * Created by Arcenal on 11/1/2016.
  */
 public class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
-    EventActivity mParentActivity;
+    EventsDetailFragmentInterface mParentFragment;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -23,12 +23,12 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         return new TimePickerDialog(getActivity(), this, hour, min, false);
     }
 
-    public void setParentActivity(EventActivity givenActivity){
-        mParentActivity = givenActivity;
+    public void setHostFragment(EventsDetailFragmentInterface givenFragment){
+        mParentFragment = givenFragment;
     }
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        mParentActivity.relayTime(view, hourOfDay, minute);
+        mParentFragment.setTime(hourOfDay, minute);
     }
 }

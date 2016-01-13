@@ -1,17 +1,19 @@
-package com.akula.arcenal.roadrunners.View;
+package com.akula.arcenal.roadrunners.view;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.akula.arcenal.roadrunners.Controller.EventController;
+import com.akula.arcenal.roadrunners.controller.EventController;
 import com.akula.arcenal.roadrunners.R;
+import com.akula.arcenal.roadrunners.model.Event;
+
+import java.util.ArrayList;
 
 
 /**
@@ -59,14 +61,13 @@ public class EventListFragment extends Fragment {
         if(mParentContext != null){
             mEventListManager = new LinearLayoutManager(mParentContext);
             mEventListView.setLayoutManager(mEventListManager);
-
-            EventController.setContext(mParentContext);
-            EventController.listAllEvents(mParentActivity, new EventController.OnOperationCompleteListener() {
+            EventController eventController = EventController.getInstance();
+            eventController.listAllEvents(mParentActivity, new EventController.OnFetchListCompleteListener() {
                 @Override
-                public void onOperationComplete(RecyclerViewAdapter adapter, Exception error) {
-                    if(adapter != null){
+                public void onFetchListComplete(ArrayList<Event> eventsList, Exception error) {
+                    if(eventsList != null){
                         mEventListView.addItemDecoration(new SimpleDividerItemDecoration(mParentContext));
-                        mEventListView.setAdapter(adapter);
+                        mEventListView.setAdapter(new RecyclerViewAdapter(eventsList, mParentActivity));
                     }
                     if(error != null){
                         //Error handling

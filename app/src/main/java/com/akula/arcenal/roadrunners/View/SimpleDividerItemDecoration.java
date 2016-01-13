@@ -1,4 +1,4 @@
-package com.akula.arcenal.roadrunners.View;
+package com.akula.arcenal.roadrunners.view;
 
 //Created by polbins. Used to add divider lines between list items
 

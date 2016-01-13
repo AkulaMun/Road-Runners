@@ -1,4 +1,4 @@
-package com.akula.arcenal.roadrunners.View;
+package com.akula.arcenal.roadrunners.view;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -8,8 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.akula.arcenal.roadrunners.Controller.EventController;
-import com.akula.arcenal.roadrunners.Model.Event;
+import com.akula.arcenal.roadrunners.controller.EventController;
+import com.akula.arcenal.roadrunners.model.Event;
 import com.akula.arcenal.roadrunners.R;
 
 import java.util.ArrayList;
@@ -36,7 +36,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             mEventDate = (TextView) itemView.findViewById(R.id.event_date);
             mEventEntry = (CardView)itemView.findViewById(R.id.event_entry);
         }
-
     }
     //ABOVE IS VIEW HOLDER (INDIVIDUAL ENTRY) CLASS. BELOW IS ADAPTER CLASS.
     private ArrayList<Event> mEventEntries;
@@ -58,7 +57,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.mEventEntryLocation.setText(mEventEntries.get(position).getLocation());
         holder.mEventEntryDistance.setText(Double.toString(mEventEntries.get(position).getDistance()) + " KM");
         holder.mEventOrganizer.setText(mEventEntries.get(position).getOrganizer());
-        holder.mEventDate.setText(EventController.getDateAsString(mEventEntries.get(position).getDate()));
+        holder.mEventDate.setText(EventDetailFragment.getDateAsString(mEventEntries.get(position).getDate()));
         holder.mEventEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,4 +1,4 @@
-package com.akula.arcenal.roadrunners.Model;
+package com.akula.arcenal.roadrunners.model;
 
 import android.util.Log;
 
@@ -7,9 +7,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Created by Arcenal on 6/1/2016.
@@ -31,6 +29,9 @@ public class Event {
     public JSONObject JSONifyEvent(){
         final JSONObject eventJSON = new JSONObject();
         try{
+            if(mID != null){
+                eventJSON.put("id", mID);
+            }
             eventJSON.put("name", mName);
             eventJSON.put("location", mLocation);
             eventJSON.put("distance", mDistance);
@@ -105,18 +106,4 @@ public class Event {
     public ArrayList<String> getParticipants(){
         return mParticipants;
     }
-
-        /*
-    private void IDGenerate(){
-        String distIDComponent;
-        if(mDistance < 0){
-            distIDComponent = "0" + Double.toString(mDistance);
-        }
-        else{
-            distIDComponent = Double.toString(mDistance).substring(0, 2);
-        }
-
-        mID = mName.substring(0, 3) + mLocation.substring(0, 3) + mOrganizer.substring(0, 3) + "-" + mDate.toString() + distIDComponent;
-    }
-    */
 }

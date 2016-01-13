@@ -10,19 +10,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.akula.arcenal.roadrunners.R;
 import com.akula.arcenal.roadrunners.controller.EventController;
 import com.akula.arcenal.roadrunners.model.Event;
-import com.akula.arcenal.roadrunners.R;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * Created by Arcenal on 6/1/2016.
+ * Created by Arcenal on 13/1/2016.
  */
-public class EventDetailFragment extends EventsDetailFragmentInterface {
-
+public class EventCreateFragment extends EventsDetailFragmentInterface {
     private EventActivity mParentActivity = null;
     private Event mTargetEvent;
     private EditText mNameInput, mDistanceInput, mOrganizerInput, mLocationInput;
@@ -36,11 +35,9 @@ public class EventDetailFragment extends EventsDetailFragmentInterface {
     private int mDateHour = 99;
     private int mDateMinute = 99;
 
-    public static EventDetailFragment newInstance(Event targetEvent){
-        EventDetailFragment eventDetailFragment = new EventDetailFragment();
-        eventDetailFragment.mTargetEvent = targetEvent;
-        eventDetailFragment.mEventDate = targetEvent.getDate();
-        return eventDetailFragment;
+    public static EventCreateFragment newInstance(){
+        EventCreateFragment eventCreateFragment = new EventCreateFragment();
+        return eventCreateFragment;
     }
 
     public void setParentActivity(EventActivity givenActivity){
@@ -60,56 +57,33 @@ public class EventDetailFragment extends EventsDetailFragmentInterface {
         mEventDetailDateInput = (TextView)layout.findViewById(R.id.event_detail_date_input);
         mEventDetailTimeInput = (TextView)layout.findViewById(R.id.event_detail_time_input);
 
-        mEventActionButton.setText("Edit Event");
+        mEventActionButton.setText("Create Event");
         mEventActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkForUpdate();
+                saveEvent(v);
             }
         });
-        //To make it re-editable
-        //textView.setTag(textView.getKeyListener());
-        //textView.setKeyListener((KeyListener)textView.getTag());
 
-        //To make it uneditable
+            //Time and Date Pickers, communicating with Activity, across fragments.
+        mEventDetailDateInput.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pickDate(v);
+                }
+            });
 
-        if(savedInstanceState == null){
-            mNameInput.setTag(mNameInput.getKeyListener());
-            mNameInput.setKeyListener(null);
-            mNameInput.setText(mTargetEvent.getName());
-            mLocationInput.setTag(mLocationInput.getKeyListener());
-            mLocationInput.setKeyListener(null);
-            mLocationInput.setText(mTargetEvent.getLocation());
-            mDistanceInput.setTag(mDistanceInput.getKeyListener());
-            mDistanceInput.setKeyListener(null);
-            mDistanceInput.setText(Double.toString(mTargetEvent.getDistance()));
-            mOrganizerInput.setTag(mOrganizerInput.getKeyListener());
-            mOrganizerInput.setKeyListener(null);
-            mOrganizerInput.setText(mTargetEvent.getOrganizer());
-            mEventDetailDateInput.setText(getDateAsString(mTargetEvent.getDate()));
-            mEventDetailTimeInput.setText(getTimeAsString(mTargetEvent.getDate()));
-        }
+        mEventDetailTimeInput.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pickTime(v);
+                }
+            });
 
         return layout;
     };
 
-    private void updateEvent(View v){
-        if(checkData() == true) {
-            Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), mEventDate);
-            newEvent.setID(mTargetEvent.getID());
-            EventController eventController = EventController.getInstance();
-            eventController.updateEvent(newEvent, new EventController.OnDataEditCompleteListener() {
-                @Override
-                public void onDataEditComplete(String message) {
-                    //TODO: Display an Alert Dialog
-                }
-            });
-            //This Line resets the app to home page. Careful that alert Dialog might never be shown.
-            mParentActivity.displayEventList();
-        }
-    }
-
-    private boolean checkData(){
+    protected boolean checkData(){
         //Input Validity Checking here
         boolean valid = true;
 
@@ -124,7 +98,6 @@ public class EventDetailFragment extends EventsDetailFragmentInterface {
         }else if(mEventDate == null){
             valid = false;
         }
-
         try{
             Double.parseDouble(mDistanceInput.getText().toString());
         }
@@ -134,6 +107,21 @@ public class EventDetailFragment extends EventsDetailFragmentInterface {
             Log.e("Number Format Invalid!", "Failed to Parse Distance into a double!");
         }
         return valid;
+    }
+
+    private void saveEvent(View v){
+        if(checkData() == true) {
+            Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), mEventDate);
+            EventController eventController = EventController.getInstance();
+            eventController.saveEvent(newEvent, new EventController.OnDataEditCompleteListener() {
+                @Override
+                public void onDataEditComplete(String message) {
+                    //TODO: Create Alert Box.
+                }
+            });
+            //This Line resets the app to home page. Careful that alert Dialog might never be shown.
+            mParentActivity.displayEventList();
+        }
     }
 
     public void pickDate(View v){
@@ -212,78 +200,5 @@ public class EventDetailFragment extends EventsDetailFragmentInterface {
                 break;
         }
         return monthInString;
-    }
-
-    public static String parseDayInWeek(int dayInWeek){
-        String dayInWeekString = "ERR";
-        switch(dayInWeek){
-            case 1:
-                dayInWeekString = "SUN";
-                break;
-            case 2:
-                dayInWeekString = "MON";
-                break;
-            case 3:
-                dayInWeekString = "TUE";
-                break;
-            case 4:
-                dayInWeekString = "WED";
-                break;
-            case 5:
-                dayInWeekString = "THU";
-                break;
-            case 6:
-                dayInWeekString = "FRI";
-                break;
-            case 7:
-                dayInWeekString = "SAT";
-                break;
-        }
-        return dayInWeekString;
-    }
-
-    public static String getDateAsString(Date givenDate){
-        GregorianCalendar eventDate = new GregorianCalendar();
-        eventDate.setTime(givenDate);
-        int dayInWeek = eventDate.get(Calendar.DAY_OF_WEEK);
-        String dayInWeekString = parseDayInWeek(dayInWeek);
-
-        String dateString = dayInWeekString + " " + eventDate.get(Calendar.DAY_OF_MONTH) + " / " + parseMonth(eventDate.get(Calendar.MONTH)) + " / " + eventDate.get(Calendar.YEAR);
-        return dateString;
-    }
-
-    public static String getTimeAsString(Date givenDate){
-        GregorianCalendar eventDate = new GregorianCalendar();
-        eventDate.setTime(givenDate);
-
-        String timeString = Integer.toString(eventDate.get(Calendar.HOUR_OF_DAY)) + " : " + Integer.toString(Calendar.MINUTE);
-        return timeString;
-    }
-
-    private void checkForUpdate(){
-        //IMPLEMENT CHECKS FOR OWNERSHIP OF EVENT ENTRY ONCE USER LOGIN IS IMPLEMENTED
-        mEventActionButton.setText("Update Event!");
-        mEventActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateEvent(v);
-            }
-        });
-        mNameInput.setKeyListener((KeyListener) mNameInput.getTag());
-        mLocationInput.setKeyListener((KeyListener)mLocationInput.getTag());
-        mDistanceInput.setKeyListener((KeyListener)mDistanceInput.getTag());
-        mOrganizerInput.setKeyListener((KeyListener)mOrganizerInput.getTag());
-        mEventDetailDateInput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pickDate(v);
-            }
-        });
-        mEventDetailTimeInput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pickTime(v);
-            }
-        });
     }
 }

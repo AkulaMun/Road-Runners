@@ -1,4 +1,4 @@
-package com.akula.arcenal.roadrunners.View;
+package com.akula.arcenal.roadrunners.view;
 
 import android.app.DatePickerDialog;
 
@@ -14,7 +14,7 @@ import java.util.GregorianCalendar;
  * Created by Arcenal on 11/1/2016.
  */
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-    EventActivity mParentActivity;
+    EventsDetailFragmentInterface mParentFragment;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -28,12 +28,12 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         return datePickerDialog;
     }
 
-    public void setParentActivity(EventActivity givenActivity){
-        mParentActivity = givenActivity;
+    public void setHostFragment(EventsDetailFragmentInterface givenFragment){
+        mParentFragment = givenFragment;
     }
 
     @Override
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-        mParentActivity.relayDate(view, year, monthOfYear, dayOfMonth);
+        mParentFragment.setDate(year, monthOfYear, dayOfMonth);
     }
 }

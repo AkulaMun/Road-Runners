@@ -1,11 +1,7 @@
-package com.akula.arcenal.roadrunners.Controller;
+package com.akula.arcenal.roadrunners.controller;
 
-import android.content.Context;
-import android.util.Log;
-
-import com.akula.arcenal.roadrunners.Model.Event;
-import com.akula.arcenal.roadrunners.View.EventActivity;
-import com.akula.arcenal.roadrunners.View.RecyclerViewAdapter;
+import com.akula.arcenal.roadrunners.model.Event;
+import com.akula.arcenal.roadrunners.view.EventActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,29 +10,37 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Created by Arcenal on 6/1/2016.
  */
 public class EventController {
-    public interface OnOperationCompleteListener{
-        void onOperationComplete(RecyclerViewAdapter adapter, Exception error);
+    public interface OnFetchListCompleteListener {
+        void onFetchListComplete(ArrayList<Event> events, Exception error);
     };
 
-    private static Context sApplicationContext;
+    public interface OnDataEditCompleteListener{
+        void onDataEditComplete(String message);
+    };
 
-    public static void setContext(Context givenContext){
-        sApplicationContext = givenContext;
+    private static EventController mInstance = null;
+
+    private EventController(){
     }
 
-    public static void listAllEvents(final EventActivity hostActivity, final OnOperationCompleteListener listener){
-        ParseController parseControl = ParseController.getInstance(sApplicationContext);
-        parseControl.list("Event", new ParseController.OnReadCompleteListener() {
+    public static EventController getInstance(){
+        if(mInstance == null){
+            mInstance = new EventController();
+        }
+        return mInstance;
+    }
+
+    public void listAllEvents(final EventActivity hostActivity, final OnFetchListCompleteListener listener){
+        ParseController parseControl = ParseController.getInstance();
+        parseControl.list("Event", new ParseController.OnOperationCompleteListener() {
             @Override
-            public void onReadComplete(JSONObject resultObject, Exception ex) {
+            public void onOperationComplete(JSONObject resultObject, Exception ex) {
                 if(resultObject != null) {
                     try {
                         JSONArray eventResultJSONArray = resultObject.getJSONArray("results");
@@ -48,11 +52,10 @@ public class EventController {
                             Event eventObject = new Event(event.getString("name"), event.getString("location"), event.getString("organizer"), event.getDouble("distance"), dateFormat((JSONObject) event.get("date")));
                             eventObject.setID(event.getString("objectId"));
                             events.add(eventObject);
-
                         }
-                        listener.onOperationComplete(new RecyclerViewAdapter(events, hostActivity), null);
+                        listener.onFetchListComplete(events, null);
                     } catch (JSONException e) {
-                        listener.onOperationComplete(null, e);
+                        listener.onFetchListComplete(null, e);
                     }
                 }
 
@@ -63,13 +66,27 @@ public class EventController {
         });
     }
 
-    public static void saveEvent(Event event){
-        ParseController parseController = ParseController.getInstance(sApplicationContext);
-        parseController.saveEvent(event.JSONifyEvent());
+    public void saveEvent(Event event, final OnDataEditCompleteListener listener){
+        ParseController parseController = ParseController.getInstance();
+        parseController.saveEvent(event.JSONifyEvent(), false, new ParseController.OnOperationCompleteListener() {
+            @Override
+            public void onOperationComplete(JSONObject resultObject, Exception ex) {
+                listener.onDataEditComplete("New Event Successfully Saved!");
+            }
+        });
     }
 
-    //Improvement... Working
-    public static Date dateFormat(JSONObject dateObject){
+    public void updateEvent(Event event, final OnDataEditCompleteListener listener){
+        ParseController parseController = ParseController.getInstance();
+        parseController.saveEvent(event.JSONifyEvent(), true, new ParseController.OnOperationCompleteListener() {
+            @Override
+            public void onOperationComplete(JSONObject resultObject, Exception ex) {
+                listener.onDataEditComplete("Event Details Successfully Updated!");
+            }
+        });
+    }
+
+    public Date dateFormat(JSONObject dateObject){
         Date resultDate = null;
         SimpleDateFormat ISOdateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         try{
@@ -84,94 +101,5 @@ public class EventController {
             //Handle Error
         }
         return resultDate;
-    }
-
-    public static String parseMonth(int month){
-        String monthInString = "ERR";
-        switch(month){
-            case 0:
-                monthInString = "JAN";
-                break;
-            case 1:
-                monthInString = "FEB";
-                break;
-            case 2:
-                monthInString = "MAR";
-                break;
-            case 3:
-                monthInString = "APR";
-                break;
-            case 4:
-                monthInString = "MAY";
-                break;
-            case 5:
-                monthInString = "JUN";
-                break;
-            case 6:
-                monthInString = "JUL";
-                break;
-            case 7:
-                monthInString = "AUG";
-                break;
-            case 8:
-                monthInString = "SEP";
-                break;
-            case 9:
-                monthInString = "OCT";
-                break;
-            case 10:
-                monthInString = "NOV";
-                break;
-            case 11:
-                monthInString = "DEC";
-                break;
-        }
-        return monthInString;
-    }
-
-    public static String parseDayInWeek(int dayInWeek){
-        String dayInWeekString = "ERR";
-        switch(dayInWeek){
-            case 1:
-                dayInWeekString = "SUN";
-                break;
-            case 2:
-                dayInWeekString = "MON";
-                break;
-            case 3:
-                dayInWeekString = "TUE";
-                break;
-            case 4:
-                dayInWeekString = "WED";
-                break;
-            case 5:
-                dayInWeekString = "THU";
-                break;
-            case 6:
-                dayInWeekString = "FRI";
-                break;
-            case 7:
-                dayInWeekString = "SAT";
-                break;
-        }
-        return dayInWeekString;
-    }
-
-    public static String getDateAsString(Date givenDate){
-        GregorianCalendar eventDate = new GregorianCalendar();
-        eventDate.setTime(givenDate);
-        int dayInWeek = eventDate.get(Calendar.DAY_OF_WEEK);
-        String dayInWeekString = parseDayInWeek(dayInWeek);
-
-        String dateString = dayInWeekString + " " + eventDate.get(Calendar.DAY_OF_MONTH) + " / " + parseMonth(eventDate.get(Calendar.MONTH)) + " / " + eventDate.get(Calendar.YEAR);
-        return dateString;
-    }
-
-    public static String getTimeAsString(Date givenDate){
-        GregorianCalendar eventDate = new GregorianCalendar();
-        eventDate.setTime(givenDate);
-
-        String timeString = Integer.toString(eventDate.get(Calendar.HOUR_OF_DAY)) + " : " + Integer.toString(Calendar.MINUTE);
-        return timeString;
     }
 }

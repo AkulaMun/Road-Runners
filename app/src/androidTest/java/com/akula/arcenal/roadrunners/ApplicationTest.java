@@ -1,20 +1,11 @@
 package com.akula.arcenal.roadrunners;
 
-import android.content.Context;
 import android.test.AndroidTestCase;
-import android.test.InstrumentationTestCase;
-import android.util.Log;
 
-import com.akula.arcenal.roadrunners.Controller.EventController;
-import com.akula.arcenal.roadrunners.Controller.ParseController;
-import com.akula.arcenal.roadrunners.Model.Event;
+import com.akula.arcenal.roadrunners.controller.EventController;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>

@@ -2,6 +2,7 @@
     <string name="app_name">Road Runners</string>
     <string name="screen_title">Road Runners</string>
     <string name="create_event">Create New Event</string>
+    <string name="event_list_label">Ongoing Events</string>
     <string name="event_detail_name_label">Event Name: </string>
     <string name="event_detail_location_label">Event Location: </string>
     <string name="event_detail_distance_label">Distance (KM) : </string>
