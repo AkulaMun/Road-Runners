@@ -27,7 +27,7 @@ public class EventDetailFragment extends EventsDetailFragmentInterface {
     private Event mTargetEvent;
     private EditText mNameInput, mDistanceInput, mOrganizerInput, mLocationInput;
     private TextView mEventDetailDateInput, mEventDetailTimeInput;
-    private Button mEventActionButton;
+    private Button mEventActionButton, mEventDeleteButton;
 
     private Date mEventDate = null;
     private int mDateYear = 99;
@@ -64,9 +64,12 @@ public class EventDetailFragment extends EventsDetailFragmentInterface {
         mEventActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkForUpdate();
+                checkToAllowUpdate();
             }
         });
+
+        mEventDeleteButton = (Button)layout.findViewById(R.id.event_detail_delete_button);
+        mEventDeleteButton.setVisibility(View.INVISIBLE);
         //To make it re-editable
         //textView.setTag(textView.getKeyListener());
         //textView.setKeyListener((KeyListener)textView.getTag());
@@ -99,6 +102,22 @@ public class EventDetailFragment extends EventsDetailFragmentInterface {
             newEvent.setID(mTargetEvent.getID());
             EventController eventController = EventController.getInstance();
             eventController.updateEvent(newEvent, new EventController.OnDataEditCompleteListener() {
+                @Override
+                public void onDataEditComplete(String message) {
+                    //TODO: Display an Alert Dialog
+                }
+            });
+            //This Line resets the app to home page. Careful that alert Dialog might never be shown.
+            mParentActivity.displayEventList();
+        }
+    }
+
+    private void deleteEvent(View v){
+        if(checkData() == true) {
+            Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), mEventDate);
+            newEvent.setID(mTargetEvent.getID());
+            EventController eventController = EventController.getInstance();
+            eventController.deleteEvent(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
                 public void onDataEditComplete(String message) {
                     //TODO: Display an Alert Dialog
@@ -260,13 +279,20 @@ public class EventDetailFragment extends EventsDetailFragmentInterface {
         return timeString;
     }
 
-    private void checkForUpdate(){
+    private void checkToAllowUpdate(){
         //IMPLEMENT CHECKS FOR OWNERSHIP OF EVENT ENTRY ONCE USER LOGIN IS IMPLEMENTED
         mEventActionButton.setText("Update Event!");
         mEventActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 updateEvent(v);
+            }
+        });
+        mEventDeleteButton.setVisibility(View.VISIBLE);
+        mEventDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteEvent(v);
             }
         });
         mNameInput.setKeyListener((KeyListener) mNameInput.getTag());

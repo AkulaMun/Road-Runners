@@ -11,6 +11,7 @@
     <string name="event_detail_organizer_label">Event Organizer :</string>
     <string name="event_detail_participants_label">Participants :</string>
     <string name="event_detail_action_button">ACTION!</string>
+    <string name="event_detail_delete_button">Delete Event</string>
     <string name="event_detail_participants_placeholder_text">Placeholder for List.</string>
     <string name="event_detail_date_input_text">Select Date!</string>
     <string name="event_detail_time_input_text">Select Time!</string>

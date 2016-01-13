@@ -4,16 +4,16 @@
     android:layout_height="match_parent">
 
     <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/event_detail_name_label"
-    android:id="@+id/event_detail_name_label"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true"
-    android:paddingLeft="20dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/event_detail_name_label"
+        android:id="@+id/event_detail_name_label"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:paddingLeft="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -181,12 +181,4 @@
         android:layout_below="@id/event_detail_participants_label"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/event_detail_delete_button"
-        android:id="@+id/event_detail_delete_button"
-        android:layout_below="@id/event_detail_action_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"/>
 </RelativeLayout>

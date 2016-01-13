@@ -86,6 +86,16 @@ public class EventController {
         });
     }
 
+    public void deleteEvent(Event event, final OnDataEditCompleteListener listener){
+        ParseController parseController = ParseController.getInstance();
+        parseController.deleteEvent(event.JSONifyEvent(), new ParseController.OnOperationCompleteListener() {
+            @Override
+            public void onOperationComplete(JSONObject resultObject, Exception ex) {
+                listener.onDataEditComplete("Event has been Deleted!");
+            }
+        });
+    }
+
     public Date dateFormat(JSONObject dateObject){
         Date resultDate = null;
         SimpleDateFormat ISOdateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");

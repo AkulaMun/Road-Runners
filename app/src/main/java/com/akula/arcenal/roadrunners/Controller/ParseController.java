@@ -31,6 +31,7 @@ public class ParseController {
     private static ParseController mInstance = null;
     private RequestQueue mRequestQueue;
     private String mParseAppId, mParseRESTAPIKey;
+    private String eventURL = "https://api.parse.com/1/classes/Event";
 
     private ParseController(Context givenContext){
         Cache mCache = new DiskBasedCache(givenContext.getCacheDir(), 1024*1024);
@@ -121,9 +122,8 @@ public class ParseController {
     }
 
     public void saveEvent(JSONObject eventJSON, boolean update, final OnOperationCompleteListener listener){
-        String URL = "https://api.parse.com/1/classes/Event";
         if(update == false){
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, URL, eventJSON, new Response.Listener<JSONObject>() {
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, eventURL, eventJSON, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     listener.onOperationComplete(response, null);
@@ -143,6 +143,7 @@ public class ParseController {
         }
         else{
             String ID;
+            String URL = eventURL;
             if((ID = eventJSON.optString("id", null)) != null)
             {
                 URL += "/" + ID;
@@ -150,13 +151,13 @@ public class ParseController {
             JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, URL, eventJSON, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    //TODO: Create Alert Box for Successful Save!
-                    Log.e("Updating!", response.toString());
+                    listener.onOperationComplete(response, null);
+                    Log.e("Response", response.toString());
                 }
             }, new Response.ErrorListener() {
                 @Override
-                public void onErrorResponse(VolleyError mErrors) {
-
+                public void onErrorResponse(VolleyError errors) {
+                    listener.onOperationComplete(null, errors);
                 }
             }){
                 @Override
@@ -168,8 +169,32 @@ public class ParseController {
         }
     }
 
-    public void deleteEvent(JSONObject eventJSON){
-
+    public void deleteEvent(JSONObject eventJSON, final OnOperationCompleteListener listener){
+        String ID;
+        String URL = eventURL;
+        if((ID = eventJSON.optString("id", null)) != null)
+        {
+            URL += "/" + ID;
+        }
+        Log.e("URL", eventURL);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                listener.onOperationComplete(response, null);
+                Log.e("Response", response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError errors) {
+                listener.onOperationComplete(null, errors);
+            }
+        }){
+            @Override
+            public Map<String, String> getHeaders(){
+                return getParseAuthenticationHeaders();
+            }
+        };
+        mRequestQueue.add(request);
     }
 
     private Map<String, String> getParseAuthenticationHeaders(){

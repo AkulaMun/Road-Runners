@@ -48,7 +48,7 @@ public class EventCreateFragment extends EventsDetailFragmentInterface {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Called Upon Fragment Creation
         // Inflate the layout for this fragment
-        View layout = inflater.inflate(R.layout.event_detail, container, false);
+        View layout = inflater.inflate(R.layout.event_create, container, false);
         mNameInput = (EditText)layout.findViewById(R.id.event_detail_name_input);
         mLocationInput = (EditText)layout.findViewById(R.id.event_detail_location_input);
         mDistanceInput = (EditText)layout.findViewById(R.id.event_detail_distance_input);
@@ -65,7 +65,7 @@ public class EventCreateFragment extends EventsDetailFragmentInterface {
             }
         });
 
-            //Time and Date Pickers, communicating with Activity, across fragments.
+            //Set Text Areas To call up time and date pickers
         mEventDetailDateInput.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
