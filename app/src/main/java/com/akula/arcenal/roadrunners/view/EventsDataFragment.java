@@ -136,4 +136,16 @@ public abstract class EventsDataFragment extends Fragment {
         }
         return monthInString;
     }
+
+    protected void displayDialog(String message){
+        AlertDialogFragment alertDialog = new AlertDialogFragment();
+        alertDialog.setMessage(message);
+        alertDialog.setListener(new AlertDialogFragment.OnDialogConfirmListener() {
+            @Override
+            public void OnDialogConfirm() {
+                mParentActivity.displayEventList();
+            }
+        });
+        alertDialog.show(mParentActivity.getSupportFragmentManager(), "AlertDialog");
+    }
 }

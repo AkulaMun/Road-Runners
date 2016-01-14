@@ -88,11 +88,10 @@ public class EventDetailFragment extends EventsDataFragment {
             eventController.updateEvent(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
                 public void onDataEditComplete(String message) {
-                    //TODO: Display an Alert Dialog
+                    displayDialog(message);
                 }
             });
             //This Line resets the app to home page. Careful that alert Dialog might never be shown.
-            mParentActivity.displayEventList();
         }
     }
 
@@ -104,11 +103,10 @@ public class EventDetailFragment extends EventsDataFragment {
             eventController.deleteEvent(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
                 public void onDataEditComplete(String message) {
-                    //TODO: Display an Alert Dialog
+                    displayDialog(message);
                 }
             });
             //This Line resets the app to home page. Careful that alert Dialog might never be shown.
-            mParentActivity.displayEventList();
         }
     }
 

@@ -76,8 +76,4 @@ public class EventActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
-
-    public void displayAlertDialog(String message){
-
-    }
 }

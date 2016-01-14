@@ -72,7 +72,7 @@ public class EventCreateFragment extends EventsDataFragment {
             eventController.saveEvent(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
                 public void onDataEditComplete(String message) {
-                    //TODO: Create Alert Box.
+                    displayDialog(message);
                 }
             });
             //This Line resets the app to home page. Careful that alert Dialog might never be shown.
