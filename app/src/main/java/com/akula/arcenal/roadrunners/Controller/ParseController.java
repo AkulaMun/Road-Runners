@@ -30,7 +30,7 @@ public class ParseController {
 
     private static ParseController mInstance = null;
     private RequestQueue mRequestQueue;
-    private String mParseAppId, mParseRESTAPIKey;
+
     private String eventURL = "https://api.parse.com/1/classes/Event";
 
     private ParseController(Context givenContext){
@@ -47,14 +47,13 @@ public class ParseController {
 
     public static void initialize(Context givenContext, String givenId, String givenKey){
         mInstance = new ParseController(givenContext);
-        mInstance.mParseAppId = givenId;
-        mInstance.mParseRESTAPIKey = givenKey;
+        ParseRequest.setKeys(givenId, givenKey);
     }
 
     public void list(String dataType, final OnOperationCompleteListener listener){
         String url = "https://api.parse.com/1/classes/" + dataType;
 
-        JsonObjectRequest JSONrequest = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+        ParseRequest JSONrequest = new ParseRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 if (listener != null) {
@@ -68,12 +67,7 @@ public class ParseController {
                     listener.onOperationComplete(null, mErrors);
                 }
             }
-        }){
-            @Override
-            public Map<String, String> getHeaders(){
-                return getParseAuthenticationHeaders();
-            }
-        };
+        });
         mRequestQueue.add(JSONrequest);
     }
 
@@ -82,6 +76,7 @@ public class ParseController {
         String url = "https://api.parse.com/1/classes/" + dataType;
 
         final JSONObject searchParams = new JSONObject();
+        //final Map<String, JSONObject> requestBody = new HashMap<>();
         final JSONObject requestBody = new JSONObject();
         try{
             searchParams.put(searchField, searchData);
@@ -91,10 +86,10 @@ public class ParseController {
         catch(JSONException e){
             //ERROR HANDLING HERE
         }
-
-        JsonObjectRequest JSONrequest = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+        ParseRequest JSONrequest = new ParseRequest(Request.Method.GET, url, requestBody, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                Log.e("Response Search:", response.toString());
                 if (listener != null) {
                     listener.onOperationComplete(response, null);
                 }
@@ -112,18 +107,13 @@ public class ParseController {
                 Map<String, String> params = new HashMap<>();
                 params.put("where", searchParams.toString());
                 return params;
-            }
-            @Override
-            public Map<String, String> getHeaders(){
-                return getParseAuthenticationHeaders();
-            }
-        };
+            }};
         mRequestQueue.add(JSONrequest);
     }
 
     public void saveEvent(JSONObject eventJSON, boolean update, final OnOperationCompleteListener listener){
         if(update == false){
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, eventURL, eventJSON, new Response.Listener<JSONObject>() {
+            ParseRequest request = new ParseRequest(Request.Method.POST, eventURL, eventJSON, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     listener.onOperationComplete(response, null);
@@ -133,12 +123,7 @@ public class ParseController {
                 public void onErrorResponse(VolleyError errors) {
                     listener.onOperationComplete(null, errors);
                 }
-            }){
-                @Override
-                public Map<String, String> getHeaders(){
-                    return getParseAuthenticationHeaders();
-                }
-            };
+            });
             mRequestQueue.add(request);
         }
         else{
@@ -148,7 +133,7 @@ public class ParseController {
             {
                 URL += "/" + ID;
             }
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, URL, eventJSON, new Response.Listener<JSONObject>() {
+            ParseRequest request = new ParseRequest(Request.Method.PUT, URL, eventJSON, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     listener.onOperationComplete(response, null);
@@ -159,12 +144,7 @@ public class ParseController {
                 public void onErrorResponse(VolleyError errors) {
                     listener.onOperationComplete(null, errors);
                 }
-            }){
-                @Override
-                public Map<String, String> getHeaders(){
-                    return getParseAuthenticationHeaders();
-                }
-            };
+            });
             mRequestQueue.add(request);
         }
     }
@@ -177,7 +157,7 @@ public class ParseController {
             URL += "/" + ID;
         }
         Log.e("URL", eventURL);
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, URL, new Response.Listener<JSONObject>() {
+        ParseRequest request = new ParseRequest(Request.Method.DELETE, URL, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 listener.onOperationComplete(response, null);
@@ -188,19 +168,7 @@ public class ParseController {
             public void onErrorResponse(VolleyError errors) {
                 listener.onOperationComplete(null, errors);
             }
-        }){
-            @Override
-            public Map<String, String> getHeaders(){
-                return getParseAuthenticationHeaders();
-            }
-        };
+        });
         mRequestQueue.add(request);
-    }
-
-    private Map<String, String> getParseAuthenticationHeaders(){
-        Map<String,String> params = new HashMap<String, String>();
-        params.put("X-Parse-Application-Id", mParseAppId);
-        params.put("X-Parse-REST-API-Key", mParseRESTAPIKey);
-        return params;
     }
 }
