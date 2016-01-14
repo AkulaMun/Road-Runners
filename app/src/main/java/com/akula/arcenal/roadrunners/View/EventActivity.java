@@ -24,13 +24,12 @@ public class EventActivity extends AppCompatActivity {
         if(savedInstanceState != null && fragmentManager.getBackStackEntryCount() > 0){
             fragmentManager.popBackStack(fragmentManager.getBackStackEntryAt(0).getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
-        displayEventList();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //For some reason, putting displayEventList here breaks on screen rotation. getContext() returns null..
+        displayEventList();
     }
 
     @Override

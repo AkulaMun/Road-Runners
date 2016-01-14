@@ -65,7 +65,7 @@ public class EventCreateFragment extends EventDataFragment {
     protected void saveEvent(View v){
         if(checkData() == true) {
             Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), mEventDate);
-            EventController eventController = EventController.getInstance();
+            EventController eventController = EventController.getInstance(getContext());
             eventController.saveEvent(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
                 public void onDataEditComplete(String message) {

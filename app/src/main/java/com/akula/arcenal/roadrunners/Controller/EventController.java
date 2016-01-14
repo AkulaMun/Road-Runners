@@ -1,6 +1,18 @@
 package com.akula.arcenal.roadrunners.controller;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.akula.arcenal.roadrunners.model.Event;
+import com.android.volley.Cache;
+import com.android.volley.Network;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,32 +27,121 @@ import java.util.Date;
  * Created by Arcenal on 6/1/2016.
  */
 public class EventController {
+    public interface OnOperationCompleteListener {
+        void onOperationComplete(JSONObject resultObject, Exception ex);
+    }
+
     public interface OnFetchListCompleteListener {
         void onFetchListComplete(ArrayList<Event> events, Exception error);
-    };
+    }
 
     public interface OnDataEditCompleteListener{
         void onDataEditComplete(String message);
-    };
-
-    private static EventController mInstance = null;
-
-    private EventController(){
     }
 
-    public static EventController getInstance(){
+    private static EventController mInstance = null;
+    private RequestQueue mRequestQueue;
+    String eventURL = "https://api.parse.com/1/classes/Event";
+
+    private EventController(Context context){
+        Cache mCache = new DiskBasedCache(context.getCacheDir(), 1024*1024);
+        Network mNetwork = new BasicNetwork(new HurlStack());
+        mRequestQueue = new RequestQueue(mCache, mNetwork);
+        mRequestQueue.start();
+        mInstance = this;
+    }
+
+    public static EventController getInstance(Context context){
         if(mInstance == null){
-            mInstance = new EventController();
+            mInstance = new EventController(context);
         }
         return mInstance;
     }
 
+    private void list(String dataType, final OnOperationCompleteListener listener){
+        String url = "https://api.parse.com/1/classes/" + dataType;
+
+        ParseRequest JSONrequest = new ParseRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                if (listener != null) {
+                    listener.onOperationComplete(response, null);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError mErrors) {
+                if (listener != null) {
+                    listener.onOperationComplete(null, mErrors);
+                }
+            }
+        });
+        mRequestQueue.add(JSONrequest);
+    }
+
+    private void saveEvent(JSONObject eventJSON, boolean update, final OnOperationCompleteListener listener){
+        if(update == false){
+            ParseRequest request = new ParseRequest(Request.Method.POST, eventURL, eventJSON, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    listener.onOperationComplete(response, null);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError errors) {
+                    listener.onOperationComplete(null, errors);
+                }
+            });
+            mRequestQueue.add(request);
+        }
+        else{
+            String ID;
+            String URL = eventURL;
+            if((ID = eventJSON.optString("id", null)) != null)
+            {
+                URL += "/" + ID;
+            }
+            ParseRequest request = new ParseRequest(Request.Method.PUT, URL, eventJSON, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    listener.onOperationComplete(response, null);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError errors) {
+                    listener.onOperationComplete(null, errors);
+                }
+            });
+            mRequestQueue.add(request);
+        }
+    }
+
+    public void delete(JSONObject eventJSON, final OnOperationCompleteListener listener){
+        String ID;
+        String URL = eventURL;
+        if((ID = eventJSON.optString("id", null)) != null)
+        {
+            URL += "/" + ID;
+        }
+        ParseRequest request = new ParseRequest(Request.Method.DELETE, URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                listener.onOperationComplete(response, null);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError errors) {
+                listener.onOperationComplete(null, errors);
+            }
+        });
+        mRequestQueue.add(request);
+    }
+
     public void listAllEvents(final OnFetchListCompleteListener listener){
-        ParseController parseControl = ParseController.getInstance();
-        parseControl.list("Event", new ParseController.OnOperationCompleteListener() {
+        list("Event", new OnOperationCompleteListener() {
             @Override
             public void onOperationComplete(JSONObject resultObject, Exception ex) {
-                if(resultObject != null) {
+                if (resultObject != null) {
                     try {
                         JSONArray eventResultJSONArray = resultObject.getJSONArray("results");
                         ArrayList<Event> events = new ArrayList<>();
@@ -48,7 +149,7 @@ public class EventController {
                         for (int i = 0; i < eventsSize; i++) {
                             //VULNERABLE CODE SECTION. CRASHES HERE IF DATA IS INCOMPLETE. DEFENSIVE PROGRAMMING REQUIRED.
                             JSONObject event = eventResultJSONArray.getJSONObject(i);
-                            Event eventObject = new Event(event.getString("name"), event.getString("location"), event.getString("organizer"), event.getDouble("distance"), dateFormat((JSONObject) event.get("date")));
+                            Event eventObject = new Event(event);
                             eventObject.setID(event.getString("objectId"));
                             events.add(eventObject);
                         }
@@ -57,8 +158,7 @@ public class EventController {
                         listener.onFetchListComplete(null, e);
                     }
                 }
-
-                if(ex != null){
+                if (ex != null) {
                     //error handling here
                 }
             }
@@ -66,8 +166,7 @@ public class EventController {
     }
 
     public void saveEvent(Event event, final OnDataEditCompleteListener listener){
-        ParseController parseController = ParseController.getInstance();
-        parseController.saveEvent(event.JSONifyEvent(), false, new ParseController.OnOperationCompleteListener() {
+        saveEvent(event.JSONifyEvent(), false, new OnOperationCompleteListener() {
             @Override
             public void onOperationComplete(JSONObject resultObject, Exception ex) {
                 listener.onDataEditComplete("New Event Successfully Saved!");
@@ -76,39 +175,20 @@ public class EventController {
     }
 
     public void updateEvent(Event event, final OnDataEditCompleteListener listener){
-        ParseController parseController = ParseController.getInstance();
-        parseController.saveEvent(event.JSONifyEvent(), true, new ParseController.OnOperationCompleteListener() {
-            @Override
-            public void onOperationComplete(JSONObject resultObject, Exception ex) {
-                listener.onDataEditComplete("Event Details Successfully Updated!");
-            }
-        });
+       saveEvent(event.JSONifyEvent(), true, new OnOperationCompleteListener() {
+           @Override
+           public void onOperationComplete(JSONObject resultObject, Exception ex) {
+               listener.onDataEditComplete("Event Details Successfully Updated!");
+           }
+       });
     }
 
-    public void deleteEvent(Event event, final OnDataEditCompleteListener listener){
-        ParseController parseController = ParseController.getInstance();
-        parseController.deleteEvent(event.JSONifyEvent(), new ParseController.OnOperationCompleteListener() {
+    public void delete(Event event, final OnDataEditCompleteListener listener){
+        delete(event.JSONifyEvent(), new OnOperationCompleteListener() {
             @Override
             public void onOperationComplete(JSONObject resultObject, Exception ex) {
                 listener.onDataEditComplete("Event has been Deleted!");
             }
         });
-    }
-
-    public Date dateFormat(JSONObject dateObject){
-        Date resultDate = null;
-        SimpleDateFormat ISOdateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        try{
-            String dateString = dateObject.getString("iso");
-            dateString = dateString.replace("T", " ");
-            resultDate = ISOdateFormat.parse(dateString);
-        }
-        catch(JSONException e){
-            //Handle Error
-        }
-        catch(ParseException e){
-            //Handle Error
-        }
-        return resultDate;
     }
 }

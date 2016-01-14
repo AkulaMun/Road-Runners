@@ -5,6 +5,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +25,14 @@ public class Event {
         mDistance = givenDistance;
         mDate = givenDate;
         mOrganizer = givenOrganizer;
+    }
+
+    public Event(JSONObject event){
+        mName = event.optString("name");
+        mLocation = event.optString("location");
+        mOrganizer = event.optString("organizer");
+        mDistance = event.optDouble("distance");
+        mDate = dateFormat((JSONObject) event.opt("date"));
     }
 
     public JSONObject JSONifyEvent(){
@@ -48,6 +57,24 @@ public class Event {
             Log.e("JSON Failure", "Save data corrupted!");
         }
         return eventJSON;
+    }
+
+
+    public Date dateFormat(JSONObject dateObject){
+        Date resultDate = null;
+        SimpleDateFormat ISOdateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        try{
+            String dateString = dateObject.getString("iso");
+            dateString = dateString.replace("T", " ");
+            resultDate = ISOdateFormat.parse(dateString);
+        }
+        catch(JSONException e){
+            //Handle Error
+        }
+        catch(ParseException e){
+            //Handle Error
+        }
+        return resultDate;
     }
 
     public void setID(String givenID){

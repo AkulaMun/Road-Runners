@@ -71,7 +71,5 @@ public class ApplicationTest extends AndroidTestCase {
         catch (JSONException e){
 
         }
-
-        EventController.dateFormat(test);
     }
 }

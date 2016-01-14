@@ -13,19 +13,12 @@ import java.util.Map;
  * Created by Arcenal on 13/1/2016.
  */
 public class ParseRequest extends JsonObjectRequest {
-    private static String sParseAppId, sParseRESTAPIKey;
-
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
         Map<String,String> params = new HashMap<String, String>();
-        params.put("X-Parse-Application-Id", sParseAppId);
-        params.put("X-Parse-REST-API-Key", sParseRESTAPIKey);
+        params.put("X-Parse-Application-Id", "X92n2Y7bH8mB3sjTDSe6vrNMIfYVEIrSiipWSiO2");
+        params.put("X-Parse-REST-API-Key", "qVwtXXbkHkyLfEwcf41jCnvESafpxQ553CmgTzYK");
         return params;
-    }
-
-    public static void setKeys(String AppKey, String APIKey){
-        sParseAppId = AppKey;
-        sParseRESTAPIKey = APIKey;
     }
 
     public ParseRequest(int method, String url, JSONObject requestBody, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {

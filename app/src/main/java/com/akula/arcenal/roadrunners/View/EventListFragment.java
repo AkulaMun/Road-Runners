@@ -57,7 +57,7 @@ public class EventListFragment extends Fragment {
         if(getContext() != null){
             mEventListManager = new LinearLayoutManager(getContext());
             mEventListView.setLayoutManager(mEventListManager);
-            EventController eventController = EventController.getInstance();
+            EventController eventController = EventController.getInstance(getContext());
             eventController.listAllEvents(new EventController.OnFetchListCompleteListener() {
                 @Override
                 public void onFetchListComplete(final ArrayList<Event> eventsList, Exception error) {

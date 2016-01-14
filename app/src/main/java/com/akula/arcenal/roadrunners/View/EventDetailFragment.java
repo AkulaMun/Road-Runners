@@ -85,7 +85,7 @@ public class EventDetailFragment extends EventDataFragment {
         if(checkData() == true) {
             Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), mEventDate);
             newEvent.setID(mTargetEvent.getID());
-            EventController eventController = EventController.getInstance();
+            EventController eventController = EventController.getInstance(getContext());
             eventController.updateEvent(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
                 public void onDataEditComplete(String message) {
@@ -99,8 +99,8 @@ public class EventDetailFragment extends EventDataFragment {
         if(checkData() == true) {
             Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), mEventDate);
             newEvent.setID(mTargetEvent.getID());
-            EventController eventController = EventController.getInstance();
-            eventController.deleteEvent(newEvent, new EventController.OnDataEditCompleteListener() {
+            EventController eventController = EventController.getInstance(getContext());
+            eventController.delete(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
                 public void onDataEditComplete(String message) {
                     displayDialog(message);
