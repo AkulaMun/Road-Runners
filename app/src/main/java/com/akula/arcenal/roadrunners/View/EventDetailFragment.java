@@ -24,10 +24,11 @@ public class EventDetailFragment extends EventDataFragment {
     private Event mTargetEvent;
     private Button mEventDeleteButton;
 
-    public static EventDetailFragment newInstance(Event targetEvent){
+    public static EventDetailFragment newInstance(Event targetEvent, final FragmentCommunicationListener listener){
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
         eventDetailFragment.mTargetEvent = targetEvent;
         eventDetailFragment.mEventDate = targetEvent.getDate();
+        eventDetailFragment.mListener = listener;
         return eventDetailFragment;
     }
 
@@ -91,7 +92,6 @@ public class EventDetailFragment extends EventDataFragment {
                     displayDialog(message);
                 }
             });
-            //This Line resets the app to home page. Careful that alert Dialog might never be shown.
         }
     }
 
@@ -106,11 +106,10 @@ public class EventDetailFragment extends EventDataFragment {
                     displayDialog(message);
                 }
             });
-            //This Line resets the app to home page. Careful that alert Dialog might never be shown.
         }
     }
 
-    public static String parseDayInWeek(int dayInWeek){
+    public String parseDayInWeek(int dayInWeek){
         String dayInWeekString = "ERR";
         switch(dayInWeek){
             case 1:
@@ -151,8 +150,7 @@ public class EventDetailFragment extends EventDataFragment {
     public String getTimeAsString(Date givenDate){
         GregorianCalendar eventDate = new GregorianCalendar();
         eventDate.setTime(givenDate);
-
-        String timeString = Integer.toString(eventDate.get(Calendar.HOUR_OF_DAY)) + " : " + Integer.toString(Calendar.MINUTE);
+        String timeString = Integer.toString(eventDate.get(Calendar.HOUR_OF_DAY)) + " : " + Integer.toString(eventDate.get(Calendar.MINUTE));
         return timeString;
     }
 

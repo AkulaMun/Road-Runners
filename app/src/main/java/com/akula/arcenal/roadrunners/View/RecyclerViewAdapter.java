@@ -27,7 +27,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public static class EventHolder extends RecyclerView.ViewHolder{
         private CardView mEventEntry;
-        private TextView mEventEntryName, mEventEntryLocation, mEventEntryDistance, mEventOrganizer, mEventDate;
+        private TextView mEventEntryName, mEventEntryLocation, mEventEntryDistance, mEventOrganizer, mEventDate, mEventTime;
         private Button mEventJoinButton;
         private boolean mJoined = false;
 
@@ -39,6 +39,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             mEventEntryDistance = (TextView) itemView.findViewById(R.id.event_distance);
             mEventOrganizer = (TextView) itemView.findViewById(R.id.event_organizer);
             mEventDate = (TextView) itemView.findViewById(R.id.event_date);
+            mEventTime = (TextView) itemView.findViewById(R.id.event_time);
             mEventJoinButton = (Button)itemView.findViewById(R.id.join_event_button);
             mEventJoinButton.setBackgroundResource(R.drawable.standing);
         }
@@ -75,11 +76,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.mEventEntryDistance.setText(Double.toString(mEventEntries.get(position).getDistance()) + " KM");
         holder.mEventOrganizer.setText(mEventEntries.get(position).getOrganizer());
         holder.mEventDate.setText(getDateAsString(mEventEntries.get(position).getDate()));
+        holder.mEventTime.setText(getTimeAsString(mEventEntries.get(position).getDate()));
         holder.mEventEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.OnEventClick(position);
-                //mHostActivity.displayEventDetails(mEventEntries.get(position));
             }
         });
         holder.mEventJoinButton.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +109,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         String dateString = dayInWeekString + " " + eventDate.get(Calendar.DAY_OF_MONTH) + " / " + parseMonth(eventDate.get(Calendar.MONTH)) + " / " + eventDate.get(Calendar.YEAR);
         return dateString;
+    }
+
+    public String getTimeAsString(Date givenDate){
+        GregorianCalendar eventDate = new GregorianCalendar();
+        eventDate.setTime(givenDate);
+        int hour = eventDate.get(Calendar.HOUR_OF_DAY);
+        int minute = eventDate.get(Calendar.MINUTE);
+        String hourString = Integer.toString(hour);
+        String minString = Integer.toString(minute);
+
+        if(hour < 10){
+            hourString = "0" + hourString;
+        }
+        if(minute < 10){
+            minString = "0" + minString;
+        }
+        String timeString = hourString + " : " + minString;
+        return timeString;
     }
 
     public static String parseDayInWeek(int dayInWeek){

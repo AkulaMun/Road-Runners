@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<RelativeLayout
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="wrap_content">
     <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -117,7 +120,7 @@
         android:layout_alignBaseline="@id/event_detail_distance_label"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:inputType="number"/>
+        android:inputType="numberDecimal"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -190,3 +193,4 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"/>
 </RelativeLayout>
+</ScrollView>

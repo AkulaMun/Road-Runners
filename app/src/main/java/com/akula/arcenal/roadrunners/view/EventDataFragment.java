@@ -15,10 +15,10 @@ import java.util.GregorianCalendar;
 
 //Provides an interface for fragments that needs to handle the details of an event.
 public abstract class EventDataFragment extends Fragment {
-    protected EventActivity mParentActivity = null;
     protected EditText mNameInput, mDistanceInput, mOrganizerInput, mLocationInput;
     protected TextView mEventDetailDateInput, mEventDetailTimeInput;
     protected Button mEventActionButton;
+    protected FragmentCommunicationListener mListener;
 
     protected Date mEventDate = null;
     protected int mDateYear = 99;
@@ -28,10 +28,6 @@ public abstract class EventDataFragment extends Fragment {
     protected int mDateMinute = 99;
 
     abstract void saveEvent(View v);
-
-    public void setParentActivity(EventActivity givenActivity){
-        mParentActivity = givenActivity;
-    }
 
     protected boolean checkData(){
         //Input Validity Checking here
@@ -62,13 +58,13 @@ public abstract class EventDataFragment extends Fragment {
     protected void pickDate(View v){
         DatePickerFragment datePick = new DatePickerFragment();
         datePick.setHostFragment(this);
-        datePick.show(mParentActivity.getSupportFragmentManager(), "pickDate");
+        datePick.show(getActivity().getSupportFragmentManager(), "pickDate");
     }
 
     protected void pickTime(View v){
         TimePickerFragment timePick = new TimePickerFragment();
         timePick.setHostFragment(this);
-        timePick.show(mParentActivity.getSupportFragmentManager(), "pickTime");
+        timePick.show(getActivity().getSupportFragmentManager(), "pickTime");
     }
 
     protected void setDate(int year, int month, int dayOfMonth){
@@ -81,7 +77,15 @@ public abstract class EventDataFragment extends Fragment {
     }
 
     protected void setTime(int hourOfDay, int minute){
-        String timeString = Integer.toString(hourOfDay) + " : " + Integer.toString(minute);
+        String hour = Integer.toString(hourOfDay);
+        String min = Integer.toString(minute);
+        if(hourOfDay < 10){
+            hour = "0" + hour;
+        }
+        if(minute < 10){
+            min = "0" + min;
+        }
+        String timeString = hour + " : " + min;
         mEventDetailTimeInput.setText(timeString);
         mDateHour = hourOfDay;
         mDateMinute = minute;
@@ -143,9 +147,9 @@ public abstract class EventDataFragment extends Fragment {
         alertDialog.setListener(new AlertDialogFragment.OnDialogConfirmListener() {
             @Override
             public void OnDialogConfirm() {
-                mParentActivity.displayEventList();
+                mListener.OnFragmentCommunicate("Operation Confirmed");
             }
         });
-        alertDialog.show(mParentActivity.getSupportFragmentManager(), "AlertDialog");
+        alertDialog.show(getActivity().getSupportFragmentManager(), "AlertDialog");
     }
 }

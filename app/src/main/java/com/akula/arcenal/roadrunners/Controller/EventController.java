@@ -1,7 +1,6 @@
 package com.akula.arcenal.roadrunners.controller;
 
 import com.akula.arcenal.roadrunners.model.Event;
-import com.akula.arcenal.roadrunners.view.EventActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,7 +35,7 @@ public class EventController {
         return mInstance;
     }
 
-    public void listAllEvents(final EventActivity hostActivity, final OnFetchListCompleteListener listener){
+    public void listAllEvents(final OnFetchListCompleteListener listener){
         ParseController parseControl = ParseController.getInstance();
         parseControl.list("Event", new ParseController.OnOperationCompleteListener() {
             @Override

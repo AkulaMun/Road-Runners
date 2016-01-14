@@ -17,8 +17,9 @@ import com.akula.arcenal.roadrunners.model.Event;
  */
 public class EventCreateFragment extends EventDataFragment {
 
-    public static EventCreateFragment newInstance(){
+    public static EventCreateFragment newInstance(FragmentCommunicationListener listener){
         EventCreateFragment eventCreateFragment = new EventCreateFragment();
+        eventCreateFragment.mListener = listener;
         return eventCreateFragment;
     }
 
@@ -71,8 +72,6 @@ public class EventCreateFragment extends EventDataFragment {
                     displayDialog(message);
                 }
             });
-            //This Line resets the app to home page. Careful that alert Dialog might never be shown.
-            mParentActivity.displayEventList();
         }
     }
 }

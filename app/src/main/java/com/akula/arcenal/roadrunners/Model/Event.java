@@ -90,7 +90,6 @@ public class Event {
         return mDate;
     }
 
-
     public void setOrganizer(String givenOrganizer){
         mOrganizer = givenOrganizer;
     }
