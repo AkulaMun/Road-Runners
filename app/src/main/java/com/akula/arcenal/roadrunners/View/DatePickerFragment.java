@@ -14,7 +14,7 @@ import java.util.GregorianCalendar;
  * Created by Arcenal on 11/1/2016.
  */
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-    EventsDetailFragmentInterface mParentFragment;
+    EventsDataFragment mParentFragment;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -28,7 +28,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         return datePickerDialog;
     }
 
-    public void setHostFragment(EventsDetailFragmentInterface givenFragment){
+    public void setHostFragment(EventsDataFragment givenFragment){
         mParentFragment = givenFragment;
     }
 

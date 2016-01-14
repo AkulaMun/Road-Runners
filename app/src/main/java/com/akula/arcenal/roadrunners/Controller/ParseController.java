@@ -12,7 +12,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
-import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -156,12 +155,10 @@ public class ParseController {
         {
             URL += "/" + ID;
         }
-        Log.e("URL", eventURL);
         ParseRequest request = new ParseRequest(Request.Method.DELETE, URL, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 listener.onOperationComplete(response, null);
-                Log.e("Response", response.toString());
             }
         }, new Response.ErrorListener() {
             @Override
