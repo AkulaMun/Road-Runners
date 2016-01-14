@@ -20,7 +20,7 @@ import java.util.GregorianCalendar;
 /**
  * Created by Arcenal on 6/1/2016.
  */
-public class EventDetailFragment extends EventsDataFragment {
+public class EventDetailFragment extends EventDataFragment {
     private Event mTargetEvent;
     private Button mEventDeleteButton;
 
@@ -175,7 +175,7 @@ public class EventDetailFragment extends EventsDataFragment {
         mNameInput.setKeyListener((KeyListener) mNameInput.getTag());
         mLocationInput.setKeyListener((KeyListener)mLocationInput.getTag());
         mDistanceInput.setKeyListener((KeyListener)mDistanceInput.getTag());
-        mOrganizerInput.setKeyListener((KeyListener)mOrganizerInput.getTag());
+        mOrganizerInput.setKeyListener((KeyListener) mOrganizerInput.getTag());
         mEventDetailDateInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

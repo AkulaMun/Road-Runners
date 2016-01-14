@@ -3,7 +3,6 @@ package com.akula.arcenal.roadrunners.view;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -65,10 +64,15 @@ public class EventListFragment extends Fragment {
             EventController eventController = EventController.getInstance();
             eventController.listAllEvents(mParentActivity, new EventController.OnFetchListCompleteListener() {
                 @Override
-                public void onFetchListComplete(ArrayList<Event> eventsList, Exception error) {
+                public void onFetchListComplete(final ArrayList<Event> eventsList, Exception error) {
                     if(eventsList != null){
                         mEventListView.addItemDecoration(new SimpleDividerItemDecoration(mParentContext));
-                        mEventListView.setAdapter(new RecyclerViewAdapter(eventsList, mParentActivity));
+                        mEventListView.setAdapter(new RecyclerViewAdapter(eventsList, new RecyclerViewAdapter.OnEventEntryClickListener() {
+                            @Override
+                            public void OnEventClick(int position) {
+                                mParentActivity.displayEventDetails(eventsList.get(position));
+                            }
+                        }));
                     }
                     if(error != null){
                         //Error handling

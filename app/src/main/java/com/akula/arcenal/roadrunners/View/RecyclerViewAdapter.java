@@ -56,10 +56,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
     //ABOVE IS VIEW HOLDER (INDIVIDUAL ENTRY) CLASS. BELOW IS ADAPTER CLASS.
     private ArrayList<Event> mEventEntries;
-    private EventActivity mHostActivity;
-    public RecyclerViewAdapter(ArrayList<Event> givenEntries, EventActivity givenHostActivity){
+    private OnEventEntryClickListener mListener;
+    public RecyclerViewAdapter(ArrayList<Event> givenEntries, OnEventEntryClickListener listener){
         mEventEntries = givenEntries;
-        mHostActivity = givenHostActivity;
+        mListener = listener;
     }
 
     @Override
@@ -78,7 +78,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.mEventEntry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mHostActivity.displayEventDetails(mEventEntries.get(position));
+                mListener.OnEventClick(position);
+                //mHostActivity.displayEventDetails(mEventEntries.get(position));
             }
         });
         holder.mEventJoinButton.setOnClickListener(new View.OnClickListener() {

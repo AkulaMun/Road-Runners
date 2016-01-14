@@ -12,7 +12,7 @@ import java.util.Calendar;
  * Created by Arcenal on 11/1/2016.
  */
 public class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
-    EventsDataFragment mParentFragment;
+    EventDataFragment mParentFragment;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -23,7 +23,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
         return new TimePickerDialog(getActivity(), this, hour, min, false);
     }
 
-    public void setHostFragment(EventsDataFragment givenFragment){
+    public void setHostFragment(EventDataFragment givenFragment){
         mParentFragment = givenFragment;
     }
 

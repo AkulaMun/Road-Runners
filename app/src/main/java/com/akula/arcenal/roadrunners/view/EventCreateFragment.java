@@ -1,7 +1,6 @@
 package com.akula.arcenal.roadrunners.view;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +12,10 @@ import com.akula.arcenal.roadrunners.R;
 import com.akula.arcenal.roadrunners.controller.EventController;
 import com.akula.arcenal.roadrunners.model.Event;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 /**
  * Created by Arcenal on 13/1/2016.
  */
-public class EventCreateFragment extends EventsDataFragment {
+public class EventCreateFragment extends EventDataFragment {
 
     public static EventCreateFragment newInstance(){
         EventCreateFragment eventCreateFragment = new EventCreateFragment();

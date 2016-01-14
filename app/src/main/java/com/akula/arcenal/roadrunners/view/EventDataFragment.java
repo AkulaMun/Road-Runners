@@ -14,7 +14,7 @@ import java.util.GregorianCalendar;
  */
 
 //Provides an interface for fragments that needs to handle the details of an event.
-public abstract class EventsDataFragment extends Fragment {
+public abstract class EventDataFragment extends Fragment {
     protected EventActivity mParentActivity = null;
     protected EditText mNameInput, mDistanceInput, mOrganizerInput, mLocationInput;
     protected TextView mEventDetailDateInput, mEventDetailTimeInput;
