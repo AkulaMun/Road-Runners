@@ -64,10 +64,10 @@ public class EventListFragment extends Fragment {
                     if(eventsList != null && getContext()!= null){
                         //Check For Null here on getContext() required. Suspected case where request completes but activity is already dead.
                         mEventListView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
-                        mEventListView.setAdapter(new RecyclerViewAdapter(eventsList, new RecyclerViewAdapter.OnEventEntryClickListener() {
+                        mEventListView.setAdapter(new EventRecyclerViewAdapter(eventsList, new EventRecyclerViewAdapter.OnEventEntryClickListener() {
                             @Override
-                            public void OnEventClick(int position) {
-                                displayEventDetails(eventsList.get(position));
+                            public void OnEventClick(Event event) {
+                                displayEventDetails(event);
                             }
                         }));
                     }

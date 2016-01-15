@@ -19,17 +19,18 @@ import java.util.GregorianCalendar;
 /**
  * Created by Arcenal on 5/1/2016.
  */
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.EventHolder>{
+public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecyclerViewAdapter.EventHolder>{
 
     public interface OnEventEntryClickListener{
-        void OnEventClick(int position);
+        void OnEventClick(Event event);
     }
 
-    public static class EventHolder extends RecyclerView.ViewHolder{
+    public class EventHolder extends RecyclerView.ViewHolder{
         private CardView mEventEntry;
         private TextView mEventEntryName, mEventEntryLocation, mEventEntryDistance, mEventOrganizer, mEventDate, mEventTime;
         private Button mEventJoinButton;
         private boolean mJoined = false;
+        private Event mEvent = null;
 
         public EventHolder(View itemView) {
             super(itemView);
@@ -42,6 +43,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             mEventTime = (TextView) itemView.findViewById(R.id.event_time);
             mEventJoinButton = (Button)itemView.findViewById(R.id.join_event_button);
             mEventJoinButton.setBackgroundResource(R.drawable.standing);
+        }
+
+        public void setEvent(Event event){
+            mEvent = event;
         }
 
         public void toggleJoin(){
@@ -58,7 +63,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //ABOVE IS VIEW HOLDER (INDIVIDUAL ENTRY) CLASS. BELOW IS ADAPTER CLASS.
     private ArrayList<Event> mEventEntries;
     private OnEventEntryClickListener mListener;
-    public RecyclerViewAdapter(ArrayList<Event> givenEntries, OnEventEntryClickListener listener){
+    public EventRecyclerViewAdapter(ArrayList<Event> givenEntries, OnEventEntryClickListener listener){
         mEventEntries = givenEntries;
         mListener = listener;
     }
@@ -71,24 +76,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(final EventHolder holder, final int position) {
-        holder.mEventEntryName.setText(mEventEntries.get(position).getName());
-        holder.mEventEntryLocation.setText(mEventEntries.get(position).getLocation());
-        holder.mEventEntryDistance.setText(Double.toString(mEventEntries.get(position).getDistance()) + " KM");
-        holder.mEventOrganizer.setText(mEventEntries.get(position).getOrganizer());
-        holder.mEventDate.setText(getDateAsString(mEventEntries.get(position).getDate()));
-        holder.mEventTime.setText(getTimeAsString(mEventEntries.get(position).getDate()));
-        holder.mEventEntry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.OnEventClick(position);
-            }
-        });
-        holder.mEventJoinButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                holder.toggleJoin();
-            }
-        });
+        setEventHolder(holder, mEventEntries.get(position));
     }
 
     @Override
@@ -99,6 +87,28 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    private void setEventHolder(final EventHolder holder, Event event){
+        holder.mEventEntryName.setText(event.getName());
+        holder.mEventEntryLocation.setText(event.getLocation());
+        holder.mEventEntryDistance.setText(Double.toString(event.getDistance()) + " KM");
+        holder.mEventOrganizer.setText(event.getOrganizer());
+        holder.mEventDate.setText(getDateAsString(event.getDate()));
+        holder.mEventTime.setText(getTimeAsString(event.getDate()));
+        holder.setEvent(event);
+        holder.mEventEntry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.OnEventClick(holder.mEvent);
+            }
+        });
+        holder.mEventJoinButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.toggleJoin();
+            }
+        });
     }
 
     public String getDateAsString(Date givenDate){
@@ -129,7 +139,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return timeString;
     }
 
-    public static String parseDayInWeek(int dayInWeek){
+    public String parseDayInWeek(int dayInWeek){
         String dayInWeekString = "ERR";
         switch(dayInWeek){
             case 1:
