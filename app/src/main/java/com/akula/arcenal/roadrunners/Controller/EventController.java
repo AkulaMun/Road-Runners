@@ -1,7 +1,6 @@
 package com.akula.arcenal.roadrunners.controller;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.akula.arcenal.roadrunners.model.Event;
 import com.android.volley.Cache;
@@ -18,25 +17,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by Arcenal on 6/1/2016.
  */
 public class EventController {
     public interface OnOperationCompleteListener {
-        void onOperationComplete(JSONObject resultObject, Exception ex);
+        void onOperationComplete(JSONObject resultObject, Exception error);
     }
 
     public interface OnFetchListCompleteListener {
-        void onFetchListComplete(ArrayList<Event> events, Exception error);
+        void onFetchListComplete(List<Event> events, Exception error);
     }
 
     public interface OnDataEditCompleteListener{
-        void onDataEditComplete(String message);
+        void onDataEditComplete(String message, Exception error);
     }
 
     private static EventController mInstance = null;
@@ -80,7 +77,7 @@ public class EventController {
     }
 
     private void saveEvent(JSONObject eventJSON, boolean update, final OnOperationCompleteListener listener){
-        if(update == false){
+        if(!update){
             ParseRequest request = new ParseRequest(Request.Method.POST, eventURL, eventJSON, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -126,12 +123,17 @@ public class EventController {
         ParseRequest request = new ParseRequest(Request.Method.DELETE, URL, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                listener.onOperationComplete(response, null);
+                if(listener != null){
+                    listener.onOperationComplete(response, null);
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError errors) {
-                listener.onOperationComplete(null, errors);
+                if(listener != null){
+                    listener.onOperationComplete(null, errors);
+                }
             }
         });
         mRequestQueue.add(request);
@@ -144,7 +146,7 @@ public class EventController {
                 if (resultObject != null) {
                     try {
                         JSONArray eventResultJSONArray = resultObject.getJSONArray("results");
-                        ArrayList<Event> events = new ArrayList<>();
+                        List<Event> events = new ArrayList<>();
                         int eventsSize = eventResultJSONArray.length();
                         for (int i = 0; i < eventsSize; i++) {
                             //VULNERABLE CODE SECTION. CRASHES HERE IF DATA IS INCOMPLETE. DEFENSIVE PROGRAMMING REQUIRED.
@@ -169,7 +171,7 @@ public class EventController {
         saveEvent(event.JSONifyEvent(), false, new OnOperationCompleteListener() {
             @Override
             public void onOperationComplete(JSONObject resultObject, Exception ex) {
-                listener.onDataEditComplete("New Event Successfully Saved!");
+                listener.onDataEditComplete("New Event Successfully Saved!", ex);
             }
         });
     }
@@ -178,7 +180,7 @@ public class EventController {
        saveEvent(event.JSONifyEvent(), true, new OnOperationCompleteListener() {
            @Override
            public void onOperationComplete(JSONObject resultObject, Exception ex) {
-               listener.onDataEditComplete("Event Details Successfully Updated!");
+               listener.onDataEditComplete("Event Details Successfully Updated!", ex);
            }
        });
     }
@@ -187,7 +189,7 @@ public class EventController {
         delete(event.JSONifyEvent(), new OnOperationCompleteListener() {
             @Override
             public void onOperationComplete(JSONObject resultObject, Exception ex) {
-                listener.onDataEditComplete("Event has been Deleted!");
+                listener.onDataEditComplete("Event has been Deleted!", ex);
             }
         });
     }

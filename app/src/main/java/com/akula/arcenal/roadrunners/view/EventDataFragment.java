@@ -1,7 +1,6 @@
 package com.akula.arcenal.roadrunners.view;
 
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -158,9 +157,25 @@ public abstract class EventDataFragment extends Fragment {
         alertDialog.setListener(new AlertDialogFragment.OnDialogConfirmListener() {
             @Override
             public void OnDialogConfirm() {
-                mListener.OnFragmentCommunicate("Operation Confirmed");
+                if(mListener != null){
+                    mListener.OnFragmentCommunicate("Operation Confirmed");
+                }
             }
         });
         alertDialog.show(getActivity().getSupportFragmentManager(), "AlertDialog");
+    }
+
+    protected void displayErrorDialog(String message){
+        AlertDialogFragment errorDialog = new AlertDialogFragment();
+        errorDialog.setMessage(message);
+        errorDialog.setListener(new AlertDialogFragment.OnDialogConfirmListener() {
+            @Override
+            public void OnDialogConfirm() {
+                if (mListener != null) {
+                    mListener.OnFragmentCommunicate("Error");
+                }
+            }
+        });
+        errorDialog.show(getActivity().getSupportFragmentManager(), "ErrorDialog");
     }
 }

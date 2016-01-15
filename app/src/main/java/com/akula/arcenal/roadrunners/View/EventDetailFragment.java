@@ -97,8 +97,13 @@ public class EventDetailFragment extends EventDataFragment {
             EventController eventController = EventController.getInstance(getContext());
             eventController.updateEvent(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
-                public void onDataEditComplete(String message) {
-                    displayDialog(message);
+                public void onDataEditComplete(String message, Exception ex) {
+                    if (message != null) {
+                        displayDialog(message);
+                    }
+                    else{
+                        displayErrorDialog(ex.getMessage());
+                    }
                 }
             });
         }
@@ -111,8 +116,13 @@ public class EventDetailFragment extends EventDataFragment {
             EventController eventController = EventController.getInstance(getContext());
             eventController.delete(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
-                public void onDataEditComplete(String message) {
-                    displayDialog(message);
+                public void onDataEditComplete(String message, Exception ex) {
+                    if(message != null){
+                        displayDialog(message);
+                    }
+                    else{
+                        displayErrorDialog(ex.getMessage());
+                    }
                 }
             });
         }

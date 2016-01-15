@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * Created by Arcenal on 5/1/2016.
@@ -61,9 +62,9 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
         }
     }
     //ABOVE IS VIEW HOLDER (INDIVIDUAL ENTRY) CLASS. BELOW IS ADAPTER CLASS.
-    private ArrayList<Event> mEventEntries;
+    private List<Event> mEventEntries;
     private OnEventEntryClickListener mListener;
-    public EventRecyclerViewAdapter(ArrayList<Event> givenEntries, OnEventEntryClickListener listener){
+    public EventRecyclerViewAdapter(List<Event> givenEntries, OnEventEntryClickListener listener){
         mEventEntries = givenEntries;
         mListener = listener;
     }

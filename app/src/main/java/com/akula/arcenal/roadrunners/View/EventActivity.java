@@ -58,7 +58,6 @@ public class EventActivity extends AppCompatActivity {
     public void displayEventList(){
         if(checkConnectivity()){
             clearBackStack();
-
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             EventListFragment eventListFragment = EventListFragment.newInstance(new FragmentCommunicationListener() {
                 @Override
@@ -85,7 +84,9 @@ public class EventActivity extends AppCompatActivity {
             EventCreateFragment createEventFragment = EventCreateFragment.newInstance(new FragmentCommunicationListener() {
                 @Override
                 public void OnFragmentCommunicate(String message) {
-                    displayEventList();
+                    if(!message.contentEquals("Error")){
+                        displayEventList();
+                    }
                 }
             });
             fragmentTransaction.replace(R.id.fragment_container, createEventFragment);

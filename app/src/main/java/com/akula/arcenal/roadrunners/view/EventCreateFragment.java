@@ -68,8 +68,13 @@ public class EventCreateFragment extends EventDataFragment {
             EventController eventController = EventController.getInstance(getContext());
             eventController.saveEvent(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
-                public void onDataEditComplete(String message) {
-                    displayDialog(message);
+                public void onDataEditComplete(String message, Exception ex) {
+                    if(message != null){
+                        displayDialog(message);
+                    }
+                    else{
+                        displayErrorDialog(ex.getMessage());
+                    }
                 }
             });
         }

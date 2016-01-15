@@ -15,6 +15,7 @@ import com.akula.arcenal.roadrunners.R;
 import com.akula.arcenal.roadrunners.model.Event;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -60,14 +61,14 @@ public class EventListFragment extends Fragment {
             EventController eventController = EventController.getInstance(getContext());
             eventController.listAllEvents(new EventController.OnFetchListCompleteListener() {
                 @Override
-                public void onFetchListComplete(final ArrayList<Event> eventsList, Exception error) {
+                public void onFetchListComplete(final List<Event> eventsList, Exception error) {
                     if(eventsList != null && getContext()!= null){
                         //Check For Null here on getContext() required. Suspected case where request completes but activity is already dead.
                         mEventListView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
-                        mEventListView.setAdapter(new EventRecyclerViewAdapter(eventsList, new EventRecyclerViewAdapter.OnEventEntryClickListener() {
+                        mEventListView.setAdapter(new EventRecyclerViewAdapter(eventsList, new EventRecyclerViewAdapter.OnEventEntryClickListener(){
                             @Override
                             public void OnEventClick(Event event) {
-                                displayEventDetails(event);
+                              displayEventDetails(event);
                             }
                         }));
                     }
@@ -86,7 +87,9 @@ public class EventListFragment extends Fragment {
         EventDetailFragment eventDetailFragment = EventDetailFragment.newInstance(targetEvent, new FragmentCommunicationListener(){
             @Override
             public void OnFragmentCommunicate(String message) {
-                mListener.OnFragmentCommunicate("Reset Fragments, Restart List Fragment.");
+                if(!message.contentEquals("Error") && mListener != null){
+                    mListener.OnFragmentCommunicate("Restart List Fragment.");
+                }
             }
         });
         fragmentTransaction.replace(R.id.fragment_container, eventDetailFragment);
