@@ -165,7 +165,18 @@ public class Event {
     public String getTimeAsString(){
         GregorianCalendar eventDate = new GregorianCalendar();
         eventDate.setTime(mDate);
-        String timeString = Integer.toString(eventDate.get(Calendar.HOUR_OF_DAY)) + " : " + Integer.toString(eventDate.get(Calendar.MINUTE));
+        int hour = eventDate.get(Calendar.HOUR_OF_DAY);
+        int min = eventDate.get(Calendar.MINUTE);
+        String hourString = Integer.toString(hour);
+        String minString = Integer.toString(min);
+        if(hour < 10){
+            hourString = "0" + hourString;
+        }
+
+        if(min < 10){
+            minString = "0" + minString;
+        }
+        String timeString = hourString + " : " + minString;
         return timeString;
     }
 

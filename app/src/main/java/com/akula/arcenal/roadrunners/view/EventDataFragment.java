@@ -57,6 +57,9 @@ public abstract class EventDataFragment extends Fragment {
 
     protected void pickDate(View v){
         DatePickerFragment datePick = new DatePickerFragment();
+        if(mEventDate != null){
+            datePick.setDefaultDate(mEventDate);
+        }
         datePick.setListener(new DatePickerFragment.OnDatePickerCompleteListener() {
             @Override
             public void OnDatePickerComplete(int year, int month, int day) {
@@ -68,6 +71,9 @@ public abstract class EventDataFragment extends Fragment {
 
     protected void pickTime(View v){
         TimePickerFragment timePick = new TimePickerFragment();
+        if(mEventDate != null){
+            timePick.setDefaultTime(mEventDate);
+        }
         timePick.setListener(new TimePickerFragment.OnTimePickerCompleteListener() {
             @Override
             public void OnTimePickerComplete(int hourOfDay, int minute) {
