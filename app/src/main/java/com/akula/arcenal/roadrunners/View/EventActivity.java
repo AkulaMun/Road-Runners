@@ -1,6 +1,8 @@
 package com.akula.arcenal.roadrunners.view;
 
-
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -18,12 +20,6 @@ public class EventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
-
-        //Clears the back navigation, since the whole App is supposed to reset when activity is recreated.
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        if(savedInstanceState != null && fragmentManager.getBackStackEntryCount() > 0){
-            fragmentManager.popBackStack(fragmentManager.getBackStackEntryAt(0).getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
     }
 
     @Override
@@ -47,28 +43,77 @@ public class EventActivity extends AppCompatActivity {
         return true;
     }
 
+    public boolean checkConnectivity(){
+        //Check for Internet Connection. Closes the app with an error dialog if internet is unavailable.
+        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if(activeNetwork == null) {
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
     public void displayEventList(){
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        EventListFragment eventListFragment = EventListFragment.newInstance(new FragmentCommunicationListener() {
-            @Override
-            public void OnFragmentCommunicate(String message) {
-                displayEventList();
-            }
-        });
-        fragmentTransaction.replace(R.id.fragment_container, eventListFragment);
-        fragmentTransaction.commit();
+        if(checkConnectivity()){
+            clearBackStack();
+
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            EventListFragment eventListFragment = EventListFragment.newInstance(new FragmentCommunicationListener() {
+                @Override
+                public void OnFragmentCommunicate(String message) {
+                    if(message.contentEquals("Connection Error")){
+                        displayErrorDialog(message + "! Please Try Again Later.");
+                    }
+                    else{
+                        displayEventList();
+                    }
+                }
+            });
+            fragmentTransaction.replace(R.id.fragment_container, eventListFragment);
+            fragmentTransaction.commit();
+        }
+        else{
+            displayErrorDialog("No Network Connection. Check your settings!");
+        }
     }
 
     public void displayCreateEvent(MenuItem clickedItem){
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        EventCreateFragment createEventFragment = EventCreateFragment.newInstance(new FragmentCommunicationListener() {
+        if(checkConnectivity()) {
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            EventCreateFragment createEventFragment = EventCreateFragment.newInstance(new FragmentCommunicationListener() {
+                @Override
+                public void OnFragmentCommunicate(String message) {
+                    displayEventList();
+                }
+            });
+            fragmentTransaction.replace(R.id.fragment_container, createEventFragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
+        else{
+            displayErrorDialog("No Network Connection. Check your settings!");
+        }
+    }
+
+    private void displayErrorDialog(String message){
+        AlertDialogFragment alertDialog = new AlertDialogFragment();
+        alertDialog.setMessage(message);
+        alertDialog.setListener(new AlertDialogFragment.OnDialogConfirmListener() {
             @Override
-            public void OnFragmentCommunicate(String message) {
-                displayEventList();
+            public void OnDialogConfirm() {
+                finish();
             }
         });
-        fragmentTransaction.replace(R.id.fragment_container, createEventFragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+        alertDialog.show(getSupportFragmentManager(), "AlertDialog");
+    }
+
+    //Clears the back navigation.
+    private void clearBackStack(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if(fragmentManager.getBackStackEntryCount() > 0){
+            fragmentManager.popBackStack(fragmentManager.getBackStackEntryAt(0).getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
     }
 }

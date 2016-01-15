@@ -1,6 +1,7 @@
 package com.akula.arcenal.roadrunners.view;
 
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,13 +58,23 @@ public abstract class EventDataFragment extends Fragment {
 
     protected void pickDate(View v){
         DatePickerFragment datePick = new DatePickerFragment();
-        datePick.setHostFragment(this);
+        datePick.setListener(new DatePickerFragment.OnDatePickerCompleteListener() {
+            @Override
+            public void OnDatePickerComplete(int year, int month, int day) {
+                setDate(year, month, day);
+            }
+        });
         datePick.show(getActivity().getSupportFragmentManager(), "pickDate");
     }
 
     protected void pickTime(View v){
         TimePickerFragment timePick = new TimePickerFragment();
-        timePick.setHostFragment(this);
+        timePick.setListener(new TimePickerFragment.OnTimePickerCompleteListener() {
+            @Override
+            public void OnTimePickerComplete(int hourOfDay, int minute) {
+                setTime(hourOfDay, minute);
+            }
+        });
         timePick.show(getActivity().getSupportFragmentManager(), "pickTime");
     }
 

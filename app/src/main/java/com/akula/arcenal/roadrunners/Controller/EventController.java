@@ -159,7 +159,7 @@ public class EventController {
                     }
                 }
                 if (ex != null) {
-                    //error handling here
+                    listener.onFetchListComplete(null, ex);
                 }
             }
         });

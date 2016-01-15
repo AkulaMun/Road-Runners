@@ -62,7 +62,7 @@ public class EventListFragment extends Fragment {
                 @Override
                 public void onFetchListComplete(final ArrayList<Event> eventsList, Exception error) {
                     if(eventsList != null && getContext()!= null){
-                        //Check For Null here on getContext() required, else if the fetch request completes but activity died off, crashes. Now how to stop all outgoing request when activity dies?
+                        //Check For Null here on getContext() required. Suspected case where request completes but activity is already dead.
                         mEventListView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
                         mEventListView.setAdapter(new RecyclerViewAdapter(eventsList, new RecyclerViewAdapter.OnEventEntryClickListener() {
                             @Override
@@ -72,7 +72,9 @@ public class EventListFragment extends Fragment {
                         }));
                     }
                     if(error != null){
-                        //Error handling
+                       if(mListener != null){
+                           mListener.OnFragmentCommunicate("Connection Error");
+                       }
                     }
                 }
             });

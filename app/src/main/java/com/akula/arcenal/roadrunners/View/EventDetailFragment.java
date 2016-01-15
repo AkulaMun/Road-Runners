@@ -2,6 +2,7 @@ package com.akula.arcenal.roadrunners.view;
 
 import android.os.Bundle;
 import android.text.method.KeyListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,13 +38,13 @@ public class EventDetailFragment extends EventDataFragment {
         // Called Upon Fragment Creation
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.event_detail, container, false);
-        mNameInput = (EditText)layout.findViewById(R.id.event_detail_name_input);
-        mLocationInput = (EditText)layout.findViewById(R.id.event_detail_location_input);
-        mDistanceInput = (EditText)layout.findViewById(R.id.event_detail_distance_input);
-        mOrganizerInput = (EditText)layout.findViewById(R.id.event_detail_organizer_input);
-        mEventActionButton = (Button)layout.findViewById(R.id.event_detail_action_button);
-        mEventDetailDateInput = (TextView)layout.findViewById(R.id.event_detail_date_input);
-        mEventDetailTimeInput = (TextView)layout.findViewById(R.id.event_detail_time_input);
+        mNameInput = (EditText) layout.findViewById(R.id.event_detail_name_input);
+        mLocationInput = (EditText) layout.findViewById(R.id.event_detail_location_input);
+        mDistanceInput = (EditText) layout.findViewById(R.id.event_detail_distance_input);
+        mOrganizerInput = (EditText) layout.findViewById(R.id.event_detail_organizer_input);
+        mEventActionButton = (Button) layout.findViewById(R.id.event_detail_action_button);
+        mEventDetailDateInput = (TextView) layout.findViewById(R.id.event_detail_date_input);
+        mEventDetailTimeInput = (TextView) layout.findViewById(R.id.event_detail_time_input);
 
         mEventActionButton.setText("Edit Event");
         mEventActionButton.setOnClickListener(new View.OnClickListener() {
@@ -53,15 +54,15 @@ public class EventDetailFragment extends EventDataFragment {
             }
         });
 
-        mEventDeleteButton = (Button)layout.findViewById(R.id.event_detail_delete_button);
+        mEventDeleteButton = (Button) layout.findViewById(R.id.event_detail_delete_button);
         mEventDeleteButton.setVisibility(View.INVISIBLE);
+
         //To make it re-editable
         //textView.setTag(textView.getKeyListener());
         //textView.setKeyListener((KeyListener)textView.getTag());
 
-        //To make it uneditable
-
-        if(savedInstanceState == null){
+        //To make it uneditable. Checks if it is newly created. Causes crashes on screen rotate while in this view if unchecked.
+        if (savedInstanceState == null){
             mNameInput.setTag(mNameInput.getKeyListener());
             mNameInput.setKeyListener(null);
             mNameInput.setText(mTargetEvent.getName());
@@ -74,16 +75,24 @@ public class EventDetailFragment extends EventDataFragment {
             mOrganizerInput.setTag(mOrganizerInput.getKeyListener());
             mOrganizerInput.setKeyListener(null);
             mOrganizerInput.setText(mTargetEvent.getOrganizer());
-            mEventDetailDateInput.setText(getDateAsString(mTargetEvent.getDate()));
-            mEventDetailTimeInput.setText(getTimeAsString(mTargetEvent.getDate()));
-        }
+            mEventDetailDateInput.setText(mTargetEvent.getDateAsString());
+            mEventDetailTimeInput.setText(mTargetEvent.getTimeAsString());
 
+            GregorianCalendar currentTime = new GregorianCalendar();
+            currentTime.setTime(mEventDate);
+            mDateYear = currentTime.get(Calendar.YEAR);
+            mDateMonth = currentTime.get(Calendar.MONTH);
+            mDateDay = currentTime.get(Calendar.DAY_OF_MONTH);
+            mDateHour = currentTime.get(Calendar.HOUR_OF_DAY);
+            mDateMinute = currentTime.get(Calendar.MINUTE);
+        }
         return layout;
     };
 
     protected void saveEvent(View v){
         if(checkData() == true) {
             Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), mEventDate);
+            Log.e("Testing", mEventDate.toString());
             newEvent.setID(mTargetEvent.getID());
             EventController eventController = EventController.getInstance(getContext());
             eventController.updateEvent(newEvent, new EventController.OnDataEditCompleteListener() {
@@ -107,51 +116,6 @@ public class EventDetailFragment extends EventDataFragment {
                 }
             });
         }
-    }
-
-    public String parseDayInWeek(int dayInWeek){
-        String dayInWeekString = "ERR";
-        switch(dayInWeek){
-            case 1:
-                dayInWeekString = "SUN";
-                break;
-            case 2:
-                dayInWeekString = "MON";
-                break;
-            case 3:
-                dayInWeekString = "TUE";
-                break;
-            case 4:
-                dayInWeekString = "WED";
-                break;
-            case 5:
-                dayInWeekString = "THU";
-                break;
-            case 6:
-                dayInWeekString = "FRI";
-                break;
-            case 7:
-                dayInWeekString = "SAT";
-                break;
-        }
-        return dayInWeekString;
-    }
-
-    public String getDateAsString(Date givenDate){
-        GregorianCalendar eventDate = new GregorianCalendar();
-        eventDate.setTime(givenDate);
-        int dayInWeek = eventDate.get(Calendar.DAY_OF_WEEK);
-        String dayInWeekString = parseDayInWeek(dayInWeek);
-
-        String dateString = dayInWeekString + " " + eventDate.get(Calendar.DAY_OF_MONTH) + " / " + parseMonth(eventDate.get(Calendar.MONTH)) + " / " + eventDate.get(Calendar.YEAR);
-        return dateString;
-    }
-
-    public String getTimeAsString(Date givenDate){
-        GregorianCalendar eventDate = new GregorianCalendar();
-        eventDate.setTime(givenDate);
-        String timeString = Integer.toString(eventDate.get(Calendar.HOUR_OF_DAY)) + " : " + Integer.toString(eventDate.get(Calendar.MINUTE));
-        return timeString;
     }
 
     private void checkToAllowUpdate(){

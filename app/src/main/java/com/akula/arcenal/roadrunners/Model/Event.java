@@ -8,7 +8,9 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created by Arcenal on 6/1/2016.
@@ -75,6 +77,96 @@ public class Event {
             //Handle Error
         }
         return resultDate;
+    }
+
+
+
+    public String parseDayInWeek(int dayInWeek){
+        String dayInWeekString = "ERR";
+        switch(dayInWeek){
+            case 1:
+                dayInWeekString = "SUN";
+                break;
+            case 2:
+                dayInWeekString = "MON";
+                break;
+            case 3:
+                dayInWeekString = "TUE";
+                break;
+            case 4:
+                dayInWeekString = "WED";
+                break;
+            case 5:
+                dayInWeekString = "THU";
+                break;
+            case 6:
+                dayInWeekString = "FRI";
+                break;
+            case 7:
+                dayInWeekString = "SAT";
+                break;
+        }
+        return dayInWeekString;
+    }
+
+    public String parseMonth(int month){
+        String monthInString = "ERR";
+        switch(month){
+            case 0:
+                monthInString = "JAN";
+                break;
+            case 1:
+                monthInString = "FEB";
+                break;
+            case 2:
+                monthInString = "MAR";
+                break;
+            case 3:
+                monthInString = "APR";
+                break;
+            case 4:
+                monthInString = "MAY";
+                break;
+            case 5:
+                monthInString = "JUN";
+                break;
+            case 6:
+                monthInString = "JUL";
+                break;
+            case 7:
+                monthInString = "AUG";
+                break;
+            case 8:
+                monthInString = "SEP";
+                break;
+            case 9:
+                monthInString = "OCT";
+                break;
+            case 10:
+                monthInString = "NOV";
+                break;
+            case 11:
+                monthInString = "DEC";
+                break;
+        }
+        return monthInString;
+    }
+
+    public String getDateAsString(){
+        GregorianCalendar eventDate = new GregorianCalendar();
+        eventDate.setTime(mDate);
+        int dayInWeek = eventDate.get(Calendar.DAY_OF_WEEK);
+        String dayInWeekString = parseDayInWeek(dayInWeek);
+
+        String dateString = dayInWeekString + " " + eventDate.get(Calendar.DAY_OF_MONTH) + " / " + parseMonth(eventDate.get(Calendar.MONTH)) + " / " + eventDate.get(Calendar.YEAR);
+        return dateString;
+    }
+
+    public String getTimeAsString(){
+        GregorianCalendar eventDate = new GregorianCalendar();
+        eventDate.setTime(mDate);
+        String timeString = Integer.toString(eventDate.get(Calendar.HOUR_OF_DAY)) + " : " + Integer.toString(eventDate.get(Calendar.MINUTE));
+        return timeString;
     }
 
     public void setID(String givenID){
