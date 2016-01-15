@@ -1,5 +1,7 @@
 package com.akula.arcenal.roadrunners.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -21,7 +23,7 @@ public class Event {
     private ArrayList<String> mParticipants;
     private Date mDate;
 
-    public Event(String givenName, String givenLocation, String givenOrganizer, double givenDistance, Date givenDate){
+    public Event(String givenName, String givenLocation, String givenOrganizer, double givenDistance, Date givenDate) {
         mName = givenName;
         mLocation = givenLocation;
         mDistance = givenDistance;
@@ -29,7 +31,7 @@ public class Event {
         mOrganizer = givenOrganizer;
     }
 
-    public Event(JSONObject event){
+    public Event(JSONObject event) {
         mName = event.optString("name");
         mLocation = event.optString("location");
         mOrganizer = event.optString("organizer");
@@ -37,10 +39,10 @@ public class Event {
         mDate = dateFormat((JSONObject) event.opt("date"));
     }
 
-    public JSONObject JSONifyEvent(){
+    public JSONObject JSONifyEvent() {
         final JSONObject eventJSON = new JSONObject();
-        try{
-            if(mID != null){
+        try {
+            if (mID != null) {
                 eventJSON.put("id", mID);
             }
             eventJSON.put("name", mName);
@@ -54,36 +56,32 @@ public class Event {
             dateDataObject.put("__type", "Date");
             dateDataObject.put("iso", isoDateString);
             eventJSON.put("date", dateDataObject);
-        }
-        catch(JSONException e){
+        } catch (JSONException e) {
             Log.e("JSON Failure", "Save data corrupted!");
         }
         return eventJSON;
     }
 
 
-    public Date dateFormat(JSONObject dateObject){
+    public Date dateFormat(JSONObject dateObject) {
         Date resultDate = null;
         SimpleDateFormat ISOdateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        try{
+        try {
             String dateString = dateObject.getString("iso");
             dateString = dateString.replace("T", " ");
             resultDate = ISOdateFormat.parse(dateString);
-        }
-        catch(JSONException e){
+        } catch (JSONException e) {
             //Handle Error
-        }
-        catch(ParseException e){
+        } catch (ParseException e) {
             //Handle Error
         }
         return resultDate;
     }
 
 
-
-    public String parseDayInWeek(int dayInWeek){
+    public String parseDayInWeek(int dayInWeek) {
         String dayInWeekString = "ERR";
-        switch(dayInWeek){
+        switch (dayInWeek) {
             case 1:
                 dayInWeekString = "SUN";
                 break;
@@ -109,9 +107,9 @@ public class Event {
         return dayInWeekString;
     }
 
-    public String parseMonth(int month){
+    public String parseMonth(int month) {
         String monthInString = "ERR";
-        switch(month){
+        switch (month) {
             case 0:
                 monthInString = "JAN";
                 break;
@@ -152,7 +150,7 @@ public class Event {
         return monthInString;
     }
 
-    public String getDateAsString(){
+    public String getDateAsString() {
         GregorianCalendar eventDate = new GregorianCalendar();
         eventDate.setTime(mDate);
         int dayInWeek = eventDate.get(Calendar.DAY_OF_WEEK);
@@ -162,77 +160,77 @@ public class Event {
         return dateString;
     }
 
-    public String getTimeAsString(){
+    public String getTimeAsString() {
         GregorianCalendar eventDate = new GregorianCalendar();
         eventDate.setTime(mDate);
         int hour = eventDate.get(Calendar.HOUR_OF_DAY);
         int min = eventDate.get(Calendar.MINUTE);
         String hourString = Integer.toString(hour);
         String minString = Integer.toString(min);
-        if(hour < 10){
+        if (hour < 10) {
             hourString = "0" + hourString;
         }
 
-        if(min < 10){
+        if (min < 10) {
             minString = "0" + minString;
         }
         String timeString = hourString + " : " + minString;
         return timeString;
     }
 
-    public void setID(String givenID){
+    public void setID(String givenID) {
         mID = givenID;
     }
 
-    public String getID(){
+    public String getID() {
         return mID;
     }
 
-    public void setName(String givenName){
+    public void setName(String givenName) {
         mName = givenName;
     }
 
-    public String getName(){
+    public String getName() {
         return mName;
     }
 
-    public void setLocation(String givenLocation){
+    public void setLocation(String givenLocation) {
         mLocation = givenLocation;
     }
 
-    public String getLocation(){
+    public String getLocation() {
         return mLocation;
     }
 
-    public void setDistance(double givenDistance){
+    public void setDistance(double givenDistance) {
         mDistance = givenDistance;
     }
 
-    public double getDistance(){
+    public double getDistance() {
         return mDistance;
     }
 
-    public void setDate(Date givenDate){
+    public void setDate(Date givenDate) {
         mDate = givenDate;
     }
 
-    public Date getDate(){
+    public Date getDate() {
         return mDate;
     }
 
-    public void setOrganizer(String givenOrganizer){
+    public void setOrganizer(String givenOrganizer) {
         mOrganizer = givenOrganizer;
     }
 
-    public String getOrganizer(){
+    public String getOrganizer() {
         return mOrganizer;
     }
 
-    public void addParticipants(String participant){
+    public void addParticipants(String participant) {
         mParticipants.add(participant);
     }
 
-    public ArrayList<String> getParticipants(){
+    public ArrayList<String> getParticipants() {
         return mParticipants;
     }
 }

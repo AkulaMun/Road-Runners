@@ -99,7 +99,8 @@
         android:layout_toRightOf="@+id/event_detail_organizer_label"
         android:layout_alignBaseline="@id/event_detail_name_label"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:singleLine="true"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -109,7 +110,8 @@
         android:layout_below="@id/event_detail_name_input"
         android:layout_alignBaseline="@id/event_detail_location_label"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:singleLine="true"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -162,7 +164,8 @@
         android:layout_below="@id/event_detail_name_input"
         android:layout_alignBaseline="@id/event_detail_organizer_label"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:singleLine="true"/>
 
     <TextView
         android:layout_width="wrap_content"
