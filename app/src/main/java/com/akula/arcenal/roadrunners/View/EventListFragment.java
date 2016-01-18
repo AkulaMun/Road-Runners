@@ -1,9 +1,11 @@
 package com.akula.arcenal.roadrunners.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,12 +25,14 @@ import java.util.List;
 public class EventListFragment extends Fragment {
     private RecyclerView mEventListView;
     private LinearLayoutManager mEventListManager;
-    private FragmentCommunicationListener mListener;
+    private static EventListFragment sInstance = null;
 
-    public static EventListFragment newInstance(FragmentCommunicationListener listener){
-        EventListFragment eventListFragment = new EventListFragment();
-        eventListFragment.mListener = listener;
-        return eventListFragment;
+    public static EventListFragment getInstance(){
+        if(sInstance == null){
+            EventListFragment eventListFragment = new EventListFragment();
+            sInstance = eventListFragment;
+        }
+        return sInstance;
     }
 
     @Override
@@ -48,13 +52,11 @@ public class EventListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        LinearLayoutManager listLayoutManager = new LinearLayoutManager(getContext());
-        mEventListView.setLayoutManager(listLayoutManager);
         listAllEvents();
     }
 
-    private void listAllEvents(){
-        if(getContext() != null){
+    private void listAllEvents() {
+        if (getContext() != null) {
             mEventListManager = new LinearLayoutManager(getContext());
             mEventListView.setLayoutManager(mEventListManager);
             EventController eventController = EventController.getInstance(getContext());
@@ -72,9 +74,7 @@ public class EventListFragment extends Fragment {
                         }));
                     }
                     if (error != null) {
-                        if (mListener != null) {
-                            mListener.OnFragmentCommunicate("Connection Error");
-                        }
+                        displayErrorDialog("A Problem Occured!", error.getMessage());
                     }
                 }
             });
@@ -83,16 +83,22 @@ public class EventListFragment extends Fragment {
 
     public void displayEventDetails(Event targetEvent){
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        EventDetailFragment eventDetailFragment = EventDetailFragment.newInstance(targetEvent, new FragmentCommunicationListener(){
+        EventDetailFragment eventDetailFragment = EventDetailFragment.newInstance(targetEvent);
+        fragmentTransaction.replace(R.id.fragment_container, eventDetailFragment);
+        fragmentTransaction.addToBackStack("eventDetailFragment");
+        fragmentTransaction.commit();
+    }
+
+    protected void displayErrorDialog(String title, String message){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             @Override
-            public void OnFragmentCommunicate(String message) {
-                if(!message.contentEquals("Error") && mListener != null){
-                    mListener.OnFragmentCommunicate("Restart List Fragment.");
-                }
+            public void onClick(DialogInterface dialog, int which) {
+                listAllEvents();
             }
         });
-        fragmentTransaction.replace(R.id.fragment_container, eventDetailFragment);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+        alertDialog.show();
     }
 }

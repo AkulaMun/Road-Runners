@@ -1,34 +1,49 @@
 package com.akula.arcenal.roadrunners.view;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.text.method.KeyListener;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.akula.arcenal.roadrunners.controller.EventController;
 import com.akula.arcenal.roadrunners.model.Event;
 import com.akula.arcenal.roadrunners.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
  * Created by Arcenal on 6/1/2016.
  */
-public class EventDetailFragment extends EventDataFragment {
-    private Event mTargetEvent;
-    private Button mEventDeleteButton;
+public class EventDetailFragment extends Fragment {
+    private EditText mNameInput, mDistanceInput, mOrganizerInput, mLocationInput;
+    private TextView mEventDetailDateInput, mEventDetailTimeInput;
+    private Button mEventActionButton, mEventDeleteButton;
 
-    public static EventDetailFragment newInstance(Event targetEvent, final FragmentCommunicationListener listener) {
+    //Defaulted to current time
+    private Date mEventDate = new GregorianCalendar().getTime();
+    private GregorianCalendar mCurrentCalendar = new GregorianCalendar();
+    private Event mTargetEvent;
+
+    public static EventDetailFragment newInstance(Event targetEvent) {
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
         eventDetailFragment.mTargetEvent = targetEvent;
         eventDetailFragment.mEventDate = targetEvent.getDate();
         eventDetailFragment.mCurrentCalendar.setTime(eventDetailFragment.mEventDate);
-        eventDetailFragment.mListener = listener;
         return eventDetailFragment;
     }
 
@@ -61,7 +76,7 @@ public class EventDetailFragment extends EventDataFragment {
         //textView.setKeyListener((KeyListener)textView.getTag());
 
         //To make it uneditable. Checks if it is newly created. Causes crashes on screen rotate while in this view if unchecked.
-        if (savedInstanceState == null){
+        if (savedInstanceState == null) {
             mNameInput.setTag(mNameInput.getKeyListener());
             mNameInput.setKeyListener(null);
             mNameInput.setText(mTargetEvent.getName());
@@ -83,7 +98,26 @@ public class EventDetailFragment extends EventDataFragment {
         return layout;
     };
 
-    protected void saveEvent(View v){
+    private boolean checkData() {
+        //Input Validity Checking here
+        boolean valid = true;
+
+        if(mNameInput.getText().toString().length() == 0 || mLocationInput.getText().toString().length() == 0 || mOrganizerInput.getText().toString().length() == 0 || mDistanceInput.getText().toString().length() == 0) {
+            valid = false;
+            displayErrorDialog("Invalid Data!", "Please Check that data entered is valid!");
+        }
+
+        try{
+            Double.parseDouble(mDistanceInput.getText().toString());
+        }
+        catch(Exception e) {
+            valid = false;
+            displayErrorDialog("Invalid Distance!", "Please Check that you have entered the distance correctly!");
+        }
+        return valid;
+    }
+
+    private void saveEvent(View v) {
         if(checkData() == true) {
             Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), mEventDate);
             newEvent.setID(mTargetEvent.getID());
@@ -102,7 +136,7 @@ public class EventDetailFragment extends EventDataFragment {
         }
     }
 
-    private void deleteEvent(View v){
+    private void deleteEvent(View v) {
         if(checkData() == true) {
             Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), mEventDate);
             newEvent.setID(mTargetEvent.getID());
@@ -120,7 +154,7 @@ public class EventDetailFragment extends EventDataFragment {
         }
     }
 
-    private void checkToAllowUpdate(){
+    private void checkToAllowUpdate() {
         //IMPLEMENT CHECKS FOR OWNERSHIP OF EVENT ENTRY ONCE USER LOGIN IS IMPLEMENTED
         mEventActionButton.setText("Update Event!");
         mEventActionButton.setOnClickListener(new View.OnClickListener() {
@@ -152,5 +186,80 @@ public class EventDetailFragment extends EventDataFragment {
                 selectTime(v);
             }
         });
+    }
+
+    private void selectDate(View v) {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                mCurrentCalendar.set(Calendar.YEAR, year);
+                mCurrentCalendar.set(Calendar.MONTH, monthOfYear);
+                mCurrentCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                mEventDate = mCurrentCalendar.getTime();
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EEE d/MMMM/yyyy");
+                mEventDetailDateInput.setText(dateFormat.format(mEventDate));
+            }
+        }, mCurrentCalendar.get(Calendar.YEAR), mCurrentCalendar.get(Calendar.MONTH), mCurrentCalendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.setTitle("Select Event Date");
+        datePickerDialog.getDatePicker().setMinDate(new GregorianCalendar().getTimeInMillis());
+        datePickerDialog.show();
+    }
+
+    private void selectTime(View v) {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                mCurrentCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                mCurrentCalendar.set(Calendar.MINUTE, minute);
+                mEventDate = mCurrentCalendar.getTime();
+
+                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mma ZZZZ");
+                mEventDetailTimeInput.setText(timeFormat.format(mEventDate));
+            }
+        }, mCurrentCalendar.get(Calendar.HOUR_OF_DAY), mCurrentCalendar.get(Calendar.MINUTE), false);
+        timePickerDialog.setTitle("Select Event Time");
+        timePickerDialog.show();
+    }
+
+    private void displayDialog(String title, String message) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                displayEventList();
+            }
+        });
+        alertDialog.show();
+    }
+
+    private void displayErrorDialog(String title, String message) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alertDialog.show();
+    }
+
+    private void displayEventList() {
+        // go back to something that was added to the backstack
+        android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        if (fragmentManager != null && fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStackImmediate();
+        } else {
+            //Shouldn't Happen to come here. If it does, recreate event list instead of crashing.
+            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+            EventListFragment eventListFragment = EventListFragment.getInstance();
+            fragmentTransaction.replace(R.id.fragment_container, eventListFragment);
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        }
     }
 }

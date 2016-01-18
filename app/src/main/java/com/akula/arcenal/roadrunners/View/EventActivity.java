@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,17 +18,18 @@ import com.akula.arcenal.roadrunners.R;
 public class EventActivity extends AppCompatActivity {
 
     private MenuItem mCreateEventMenuItem;
+    private Fragment mCurrentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
-        Log.w("Activity Restart.", "Activity Restarted!");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.e("Activity Resumed", "Activity Resumed.");
         displayEventList();
     }
 
@@ -59,21 +60,11 @@ public class EventActivity extends AppCompatActivity {
         }
     }
 
+
     public void displayEventList(){
         if(checkConnectivity()){
-            clearBackStack();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            EventListFragment eventListFragment = EventListFragment.newInstance(new FragmentCommunicationListener() {
-                @Override
-                public void OnFragmentCommunicate(String message) {
-                    if(message.contentEquals("Connection Error")){
-                        displayErrorDialog("Error", message + "! Please Try Again Later.");
-                    }
-                    else{
-                        displayEventList();
-                    }
-                }
-            });
+            EventListFragment eventListFragment = EventListFragment.getInstance();
             fragmentTransaction.replace(R.id.fragment_container, eventListFragment);
             fragmentTransaction.commit();
         }
@@ -82,19 +73,13 @@ public class EventActivity extends AppCompatActivity {
         }
     }
 
+    //CreateEventFragment is displayed by Menu Item click.
     public void displayCreateEvent(MenuItem clickedItem) {
         if(checkConnectivity()) {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            EventCreateFragment createEventFragment = EventCreateFragment.newInstance(new FragmentCommunicationListener() {
-                @Override
-                public void OnFragmentCommunicate(String message) {
-                    if(!message.contentEquals("Error")) {
-                        displayEventList();
-                    }
-                }
-            });
+            EventCreateFragment createEventFragment = EventCreateFragment.newInstance();
             fragmentTransaction.replace(R.id.fragment_container, createEventFragment);
-            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.addToBackStack("createEventFragment");
             fragmentTransaction.commit();
         }
         else{
@@ -110,17 +95,9 @@ public class EventActivity extends AppCompatActivity {
         errorDialog.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                finish();
             }
         });
         errorDialog.show();
-    }
-
-    //Clears the back navigation.
-    private void clearBackStack() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        if(fragmentManager.getBackStackEntryCount() > 0) {
-            fragmentManager.popBackStack(fragmentManager.getBackStackEntryAt(0).getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
     }
 }
