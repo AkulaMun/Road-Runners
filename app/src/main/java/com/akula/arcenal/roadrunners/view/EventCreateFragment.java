@@ -17,9 +17,10 @@ import com.akula.arcenal.roadrunners.model.Event;
  */
 public class EventCreateFragment extends EventDataFragment {
 
-    public static EventCreateFragment newInstance(FragmentCommunicationListener listener){
+    public static EventCreateFragment newInstance(FragmentCommunicationListener listener) {
         EventCreateFragment eventCreateFragment = new EventCreateFragment();
         eventCreateFragment.mListener = listener;
+        eventCreateFragment.mCurrentCalendar.setTime(eventCreateFragment.mEventDate);
         return eventCreateFragment;
     }
 
@@ -28,13 +29,13 @@ public class EventCreateFragment extends EventDataFragment {
         // Called Upon Fragment Creation
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.event_create, container, false);
-        mNameInput = (EditText)layout.findViewById(R.id.event_detail_name_input);
-        mLocationInput = (EditText)layout.findViewById(R.id.event_detail_location_input);
-        mDistanceInput = (EditText)layout.findViewById(R.id.event_detail_distance_input);
-        mOrganizerInput = (EditText)layout.findViewById(R.id.event_detail_organizer_input);
-        mEventActionButton = (Button)layout.findViewById(R.id.event_detail_action_button);
-        mEventDetailDateInput = (TextView)layout.findViewById(R.id.event_detail_date_input);
-        mEventDetailTimeInput = (TextView)layout.findViewById(R.id.event_detail_time_input);
+        mNameInput = (EditText) layout.findViewById(R.id.event_detail_name_input);
+        mLocationInput = (EditText) layout.findViewById(R.id.event_detail_location_input);
+        mDistanceInput = (EditText) layout.findViewById(R.id.event_detail_distance_input);
+        mOrganizerInput = (EditText) layout.findViewById(R.id.event_detail_organizer_input);
+        mEventActionButton = (Button) layout.findViewById(R.id.event_detail_action_button);
+        mEventDetailDateInput = (TextView) layout.findViewById(R.id.event_detail_date_input);
+        mEventDetailTimeInput = (TextView) layout.findViewById(R.id.event_detail_time_input);
 
         mEventActionButton.setText("Create Event");
         mEventActionButton.setOnClickListener(new View.OnClickListener() {
@@ -48,14 +49,14 @@ public class EventCreateFragment extends EventDataFragment {
         mEventDetailDateInput.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    pickDate(v);
+                    selectDate(v);
                 }
             });
 
         mEventDetailTimeInput.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    pickTime(v);
+                    selectTime(v);
                 }
             });
 
@@ -70,10 +71,10 @@ public class EventCreateFragment extends EventDataFragment {
                 @Override
                 public void onDataEditComplete(String message, Exception ex) {
                     if(message != null){
-                        displayDialog(message);
+                        displayDialog("Event Saved!", message);
                     }
                     else{
-                        displayErrorDialog(ex.getMessage());
+                        displayErrorDialog("Error!", ex.getMessage());
                     }
                 }
             });

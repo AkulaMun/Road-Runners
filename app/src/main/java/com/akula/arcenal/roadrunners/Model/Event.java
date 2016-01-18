@@ -1,7 +1,5 @@
 package com.akula.arcenal.roadrunners.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -42,26 +40,25 @@ public class Event {
     public JSONObject JSONifyEvent() {
         final JSONObject eventJSON = new JSONObject();
         try {
-            if (mID != null) {
-                eventJSON.put("id", mID);
-            }
-            eventJSON.put("name", mName);
-            eventJSON.put("location", mLocation);
-            eventJSON.put("distance", mDistance);
-            eventJSON.put("organizer", mOrganizer);
+                if (mID != null) {
+                    eventJSON.put("id", mID);
+                }
+                eventJSON.put("name", mName);
+                eventJSON.put("location", mLocation);
+                eventJSON.put("distance", mDistance);
+                eventJSON.put("organizer", mOrganizer);
 
-            SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            String isoDateString = isoDateFormat.format(mDate);
-            JSONObject dateDataObject = new JSONObject();
-            dateDataObject.put("__type", "Date");
-            dateDataObject.put("iso", isoDateString);
-            eventJSON.put("date", dateDataObject);
+                SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                String isoDateString = isoDateFormat.format(mDate);
+                JSONObject dateDataObject = new JSONObject();
+                dateDataObject.put("__type", "Date");
+                dateDataObject.put("iso", isoDateString);
+                eventJSON.put("date", dateDataObject);
         } catch (JSONException e) {
-            Log.e("JSON Failure", "Save data corrupted!");
+
         }
         return eventJSON;
     }
-
 
     public Date dateFormat(JSONObject dateObject) {
         Date resultDate = null;
@@ -70,112 +67,27 @@ public class Event {
             String dateString = dateObject.getString("iso");
             dateString = dateString.replace("T", " ");
             resultDate = ISOdateFormat.parse(dateString);
-        } catch (JSONException e) {
-            //Handle Error
-        } catch (ParseException e) {
-            //Handle Error
+        } catch (Exception e) {
+            Log.e("Date Parse Failure", e.getMessage());
         }
         return resultDate;
     }
 
-
-    public String parseDayInWeek(int dayInWeek) {
-        String dayInWeekString = "ERR";
-        switch (dayInWeek) {
-            case 1:
-                dayInWeekString = "SUN";
-                break;
-            case 2:
-                dayInWeekString = "MON";
-                break;
-            case 3:
-                dayInWeekString = "TUE";
-                break;
-            case 4:
-                dayInWeekString = "WED";
-                break;
-            case 5:
-                dayInWeekString = "THU";
-                break;
-            case 6:
-                dayInWeekString = "FRI";
-                break;
-            case 7:
-                dayInWeekString = "SAT";
-                break;
-        }
-        return dayInWeekString;
-    }
-
-    public String parseMonth(int month) {
-        String monthInString = "ERR";
-        switch (month) {
-            case 0:
-                monthInString = "JAN";
-                break;
-            case 1:
-                monthInString = "FEB";
-                break;
-            case 2:
-                monthInString = "MAR";
-                break;
-            case 3:
-                monthInString = "APR";
-                break;
-            case 4:
-                monthInString = "MAY";
-                break;
-            case 5:
-                monthInString = "JUN";
-                break;
-            case 6:
-                monthInString = "JUL";
-                break;
-            case 7:
-                monthInString = "AUG";
-                break;
-            case 8:
-                monthInString = "SEP";
-                break;
-            case 9:
-                monthInString = "OCT";
-                break;
-            case 10:
-                monthInString = "NOV";
-                break;
-            case 11:
-                monthInString = "DEC";
-                break;
-        }
-        return monthInString;
-    }
-
     public String getDateAsString() {
-        GregorianCalendar eventDate = new GregorianCalendar();
-        eventDate.setTime(mDate);
-        int dayInWeek = eventDate.get(Calendar.DAY_OF_WEEK);
-        String dayInWeekString = parseDayInWeek(dayInWeek);
-
-        String dateString = dayInWeekString + " " + eventDate.get(Calendar.DAY_OF_MONTH) + " / " + parseMonth(eventDate.get(Calendar.MONTH)) + " / " + eventDate.get(Calendar.YEAR);
-        return dateString;
+        SimpleDateFormat isoDateFormat = new SimpleDateFormat("EEE d/MMMM/yyyy  h:ma ZZZZ");
+        return isoDateFormat.format(mDate);
     }
 
-    public String getTimeAsString() {
-        GregorianCalendar eventDate = new GregorianCalendar();
-        eventDate.setTime(mDate);
-        int hour = eventDate.get(Calendar.HOUR_OF_DAY);
-        int min = eventDate.get(Calendar.MINUTE);
-        String hourString = Integer.toString(hour);
-        String minString = Integer.toString(min);
-        if (hour < 10) {
-            hourString = "0" + hourString;
+    public String getDateAsString(String field) {
+        if(field.equals("date")) {
+            SimpleDateFormat isoDateFormat = new SimpleDateFormat("EEE d/MMMM/yyyy");
+            return isoDateFormat.format(mDate);
         }
-
-        if (min < 10) {
-            minString = "0" + minString;
+        if (field.equals("time")) {
+            SimpleDateFormat isoDateFormat = new SimpleDateFormat("hh:mma ZZZZ");
+            return isoDateFormat.format(mDate);
         }
-        String timeString = hourString + " : " + minString;
-        return timeString;
+        return "ERROR";
     }
 
     public void setID(String givenID) {

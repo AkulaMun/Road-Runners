@@ -14,7 +14,6 @@ import com.akula.arcenal.roadrunners.controller.EventController;
 import com.akula.arcenal.roadrunners.R;
 import com.akula.arcenal.roadrunners.model.Event;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -59,23 +58,23 @@ public class EventListFragment extends Fragment {
             mEventListManager = new LinearLayoutManager(getContext());
             mEventListView.setLayoutManager(mEventListManager);
             EventController eventController = EventController.getInstance(getContext());
-            eventController.listAllEvents(new EventController.OnFetchListCompleteListener() {
+            eventController.listEvent(new EventController.OnFetchListCompleteListener() {
                 @Override
                 public void onFetchListComplete(final List<Event> eventsList, Exception error) {
-                    if(eventsList != null && getContext()!= null){
+                    if (eventsList != null && getContext() != null) {
                         //Check For Null here on getContext() required. Suspected case where request completes but activity is already dead.
                         mEventListView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
-                        mEventListView.setAdapter(new EventRecyclerViewAdapter(eventsList, new EventRecyclerViewAdapter.OnEventEntryClickListener(){
+                        mEventListView.setAdapter(new EventRecyclerViewAdapter(eventsList, new EventRecyclerViewAdapter.OnEventEntryClickListener() {
                             @Override
                             public void OnEventClick(Event event) {
-                              displayEventDetails(event);
+                                displayEventDetails(event);
                             }
                         }));
                     }
-                    if(error != null){
-                       if(mListener != null){
-                           mListener.OnFragmentCommunicate("Connection Error");
-                       }
+                    if (error != null) {
+                        if (mListener != null) {
+                            mListener.OnFragmentCommunicate("Connection Error");
+                        }
                     }
                 }
             });

@@ -1,11 +1,19 @@
 package com.akula.arcenal.roadrunners.view;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -20,12 +28,9 @@ public abstract class EventDataFragment extends Fragment {
     protected Button mEventActionButton;
     protected FragmentCommunicationListener mListener;
 
-    protected Date mEventDate = null;
-    protected int mDateYear = 99;
-    protected int mDateMonth = 99;
-    protected int mDateDay = 99;
-    protected int mDateHour = 99;
-    protected int mDateMinute = 99;
+    //Defaulted to current time
+    protected Date mEventDate = new GregorianCalendar().getTime();
+    protected GregorianCalendar mCurrentCalendar = new GregorianCalendar();
 
     abstract void saveEvent(View v);
 
@@ -33,15 +38,7 @@ public abstract class EventDataFragment extends Fragment {
         //Input Validity Checking here
         boolean valid = true;
 
-        if(mNameInput.getText().toString().length() == 0){
-            valid = false;
-        }else if(mLocationInput.getText().toString().length() == 0){
-            valid = false;
-        }else if(mOrganizerInput.getText().toString().length() == 0){
-            valid = false;
-        }else if(mDistanceInput.getText().toString().length() == 0) {
-            valid = false;
-        }else if(mEventDate == null){
+        if(mNameInput.getText().toString().length() == 0 || mLocationInput.getText().toString().length() == 0 || mOrganizerInput.getText().toString().length() == 0 || mDistanceInput.getText().toString().length() == 0){
             valid = false;
         }
 
@@ -55,133 +52,63 @@ public abstract class EventDataFragment extends Fragment {
         return valid;
     }
 
-    protected void pickDate(View v){
-        DatePickerFragment datePick = new DatePickerFragment();
-        if(mEventDate != null){
-            datePick.setDefaultDate(mEventDate);
-        }
-        datePick.setListener(new DatePickerFragment.OnDatePickerCompleteListener() {
+    protected void selectDate(View v) {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void OnDatePickerComplete(int year, int month, int day) {
-                setDate(year, month, day);
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                mCurrentCalendar.set(Calendar.YEAR, year);
+                mCurrentCalendar.set(Calendar.MONTH, monthOfYear);
+                mCurrentCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                mEventDate = mCurrentCalendar.getTime();
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EEE d/MMMM/yyyy");
+                mEventDetailDateInput.setText(dateFormat.format(mEventDate));
             }
-        });
-        datePick.show(getActivity().getSupportFragmentManager(), "pickDate");
+        }, mCurrentCalendar.get(Calendar.YEAR), mCurrentCalendar.get(Calendar.MONTH), mCurrentCalendar.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.setTitle("Select Event Date");
+        datePickerDialog.getDatePicker().setMinDate(new GregorianCalendar().getTimeInMillis());
+        datePickerDialog.show();
     }
 
-    protected void pickTime(View v){
-        TimePickerFragment timePick = new TimePickerFragment();
-        if(mEventDate != null){
-            timePick.setDefaultTime(mEventDate);
-        }
-        timePick.setListener(new TimePickerFragment.OnTimePickerCompleteListener() {
+    protected void selectTime(View v) {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
             @Override
-            public void OnTimePickerComplete(int hourOfDay, int minute) {
-                setTime(hourOfDay, minute);
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                mCurrentCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                mCurrentCalendar.set(Calendar.MINUTE, minute);
+                mEventDate = mCurrentCalendar.getTime();
+
+                SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mma ZZZZ");
+                mEventDetailTimeInput.setText(timeFormat.format(mEventDate));
             }
-        });
-        timePick.show(getActivity().getSupportFragmentManager(), "pickTime");
+        }, mCurrentCalendar.get(Calendar.HOUR_OF_DAY), mCurrentCalendar.get(Calendar.MINUTE), false);
+        timePickerDialog.setTitle("Select Event Time");
+        timePickerDialog.show();
     }
 
-    protected void setDate(int year, int month, int dayOfMonth){
-        String dateString = Integer.toString(dayOfMonth) + " / " + parseMonth(month) + " / " + Integer.toString(year);
-        mEventDetailDateInput.setText(dateString);
-        mDateYear = year;
-        mDateMonth = month;
-        mDateDay = dayOfMonth;
-        dateTimeCombiner();
-    }
-
-    protected void setTime(int hourOfDay, int minute){
-        String hour = Integer.toString(hourOfDay);
-        String min = Integer.toString(minute);
-        if(hourOfDay < 10){
-            hour = "0" + hour;
-        }
-        if(minute < 10){
-            min = "0" + min;
-        }
-        String timeString = hour + " : " + min;
-        mEventDetailTimeInput.setText(timeString);
-        mDateHour = hourOfDay;
-        mDateMinute = minute;
-        dateTimeCombiner();
-    }
-
-    protected void dateTimeCombiner(){
-        if(mDateYear != 99 && mDateMonth != 99 && mDateDay != 99 && mDateHour != 99 && mDateMinute != 99){
-            mEventDate = new GregorianCalendar(mDateYear, mDateMonth, mDateDay, mDateHour, mDateMinute).getTime();
-        }
-    }
-
-    public String parseMonth(int month){
-        String monthInString = "ERR";
-        switch(month){
-            case 0:
-                monthInString = "JAN";
-                break;
-            case 1:
-                monthInString = "FEB";
-                break;
-            case 2:
-                monthInString = "MAR";
-                break;
-            case 3:
-                monthInString = "APR";
-                break;
-            case 4:
-                monthInString = "MAY";
-                break;
-            case 5:
-                monthInString = "JUN";
-                break;
-            case 6:
-                monthInString = "JUL";
-                break;
-            case 7:
-                monthInString = "AUG";
-                break;
-            case 8:
-                monthInString = "SEP";
-                break;
-            case 9:
-                monthInString = "OCT";
-                break;
-            case 10:
-                monthInString = "NOV";
-                break;
-            case 11:
-                monthInString = "DEC";
-                break;
-        }
-        return monthInString;
-    }
-
-    protected void displayDialog(String message){
-        AlertDialogFragment alertDialog = new AlertDialogFragment();
+    protected void displayDialog(String title, String message) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        alertDialog.setTitle(title);
         alertDialog.setMessage(message);
-        alertDialog.setListener(new AlertDialogFragment.OnDialogConfirmListener() {
+        alertDialog.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             @Override
-            public void OnDialogConfirm() {
-                if(mListener != null){
-                    mListener.OnFragmentCommunicate("Operation Confirmed");
-                }
+            public void onClick(DialogInterface dialog, int which) {
+
             }
         });
-        alertDialog.show(getActivity().getSupportFragmentManager(), "AlertDialog");
+        alertDialog.show();
     }
 
-    protected void displayErrorDialog(String message){
-        AlertDialogFragment errorDialog = new AlertDialogFragment();
-        errorDialog.setMessage(message);
-        errorDialog.setListener(new AlertDialogFragment.OnDialogConfirmListener() {
+    protected void displayErrorDialog(String title, String message){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             @Override
-            public void OnDialogConfirm() {
-                if (mListener != null) {
-                    mListener.OnFragmentCommunicate("Error");
-                }
+            public void onClick(DialogInterface dialog, int which) {
+
             }
         });
-        errorDialog.show(getActivity().getSupportFragmentManager(), "ErrorDialog");
+        alertDialog.show();
     }
 }

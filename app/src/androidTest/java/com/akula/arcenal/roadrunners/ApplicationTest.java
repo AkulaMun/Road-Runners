@@ -1,11 +1,19 @@
 package com.akula.arcenal.roadrunners;
 
 import android.test.AndroidTestCase;
+import android.util.Log;
 
 import com.akula.arcenal.roadrunners.controller.EventController;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -54,22 +62,13 @@ public class ApplicationTest extends AndroidTestCase {
         parseController.saveEvent(test);
     }
 
-
+*/
     public void testDate(){
         GregorianCalendar testDate = new GregorianCalendar(2017, 10, 13, 10, 55);
-        SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MMMM-dd'T'HH:mm:ss.SSS'Z'");
+        //SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MMMM-dd'T'HH:mm:ss.SSS'Z'");
+        SimpleDateFormat isoDateFormat = new SimpleDateFormat("EEE d/MMMM/yyyy  h:ma ZZZZ");
         String formatted = isoDateFormat.format(testDate.getTime());
         Log.e("????", formatted);
-    }*/
-//Date JSON: {"__type":"Date","iso":"2016-03-03T13:10:00.000Z"}
-    public void testControllerDate(){
-        JSONObject test = new JSONObject();
-        try{
-            test.put("__type", "Date");
-            test.put("iso", "2016-03-03T13:10:00.000Z");
-        }
-        catch (JSONException e){
-
-        }
     }
+//Date JSON: {"__type":"Date","iso":"2016-03-03T13:10:00.000Z"}
 }

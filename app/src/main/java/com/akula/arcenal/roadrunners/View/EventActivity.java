@@ -1,12 +1,15 @@
 package com.akula.arcenal.roadrunners.view;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -20,6 +23,7 @@ public class EventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
+        Log.w("Activity Restart.", "Activity Restarted!");
     }
 
     @Override
@@ -63,7 +67,7 @@ public class EventActivity extends AppCompatActivity {
                 @Override
                 public void OnFragmentCommunicate(String message) {
                     if(message.contentEquals("Connection Error")){
-                        displayErrorDialog(message + "! Please Try Again Later.");
+                        displayErrorDialog("Error", message + "! Please Try Again Later.");
                     }
                     else{
                         displayEventList();
@@ -74,17 +78,17 @@ public class EventActivity extends AppCompatActivity {
             fragmentTransaction.commit();
         }
         else{
-            displayErrorDialog("No Network Connection. Check your settings!");
+            displayErrorDialog("Error!", "No Network Connection. Check your settings!");
         }
     }
 
-    public void displayCreateEvent(MenuItem clickedItem){
+    public void displayCreateEvent(MenuItem clickedItem) {
         if(checkConnectivity()) {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             EventCreateFragment createEventFragment = EventCreateFragment.newInstance(new FragmentCommunicationListener() {
                 @Override
                 public void OnFragmentCommunicate(String message) {
-                    if(!message.contentEquals("Error")){
+                    if(!message.contentEquals("Error")) {
                         displayEventList();
                     }
                 }
@@ -94,26 +98,28 @@ public class EventActivity extends AppCompatActivity {
             fragmentTransaction.commit();
         }
         else{
-            displayErrorDialog("No Network Connection. Check your settings!");
+            displayErrorDialog("Error!", "No Network Connection. Check your settings!");
         }
     }
 
-    private void displayErrorDialog(String message){
-        AlertDialogFragment alertDialog = new AlertDialogFragment();
-        alertDialog.setMessage(message);
-        alertDialog.setListener(new AlertDialogFragment.OnDialogConfirmListener() {
+    private void displayErrorDialog(String title, String message) {
+        //Line below is very picky on context. getApplicationContext and getBaseContext crashes it.
+        AlertDialog.Builder errorDialog = new AlertDialog.Builder(this);
+        errorDialog.setTitle(title);
+        errorDialog.setMessage(message);
+        errorDialog.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             @Override
-            public void OnDialogConfirm() {
-                finish();
+            public void onClick(DialogInterface dialog, int which) {
+
             }
         });
-        alertDialog.show(getSupportFragmentManager(), "AlertDialog");
+        errorDialog.show();
     }
 
     //Clears the back navigation.
-    private void clearBackStack(){
+    private void clearBackStack() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        if(fragmentManager.getBackStackEntryCount() > 0){
+        if(fragmentManager.getBackStackEntryCount() > 0) {
             fragmentManager.popBackStack(fragmentManager.getBackStackEntryAt(0).getId(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }

@@ -14,8 +14,6 @@ import com.akula.arcenal.roadrunners.controller.EventController;
 import com.akula.arcenal.roadrunners.model.Event;
 import com.akula.arcenal.roadrunners.R;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
@@ -25,10 +23,11 @@ public class EventDetailFragment extends EventDataFragment {
     private Event mTargetEvent;
     private Button mEventDeleteButton;
 
-    public static EventDetailFragment newInstance(Event targetEvent, final FragmentCommunicationListener listener){
+    public static EventDetailFragment newInstance(Event targetEvent, final FragmentCommunicationListener listener) {
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
         eventDetailFragment.mTargetEvent = targetEvent;
         eventDetailFragment.mEventDate = targetEvent.getDate();
+        eventDetailFragment.mCurrentCalendar.setTime(eventDetailFragment.mEventDate);
         eventDetailFragment.mListener = listener;
         return eventDetailFragment;
     }
@@ -75,16 +74,11 @@ public class EventDetailFragment extends EventDataFragment {
             mOrganizerInput.setTag(mOrganizerInput.getKeyListener());
             mOrganizerInput.setKeyListener(null);
             mOrganizerInput.setText(mTargetEvent.getOrganizer());
-            mEventDetailDateInput.setText(mTargetEvent.getDateAsString());
-            mEventDetailTimeInput.setText(mTargetEvent.getTimeAsString());
+            mEventDetailDateInput.setText(mTargetEvent.getDateAsString("date"));
+            mEventDetailTimeInput.setText(mTargetEvent.getDateAsString("time"));
 
             GregorianCalendar currentTime = new GregorianCalendar();
             currentTime.setTime(mEventDate);
-            mDateYear = currentTime.get(Calendar.YEAR);
-            mDateMonth = currentTime.get(Calendar.MONTH);
-            mDateDay = currentTime.get(Calendar.DAY_OF_MONTH);
-            mDateHour = currentTime.get(Calendar.HOUR_OF_DAY);
-            mDateMinute = currentTime.get(Calendar.MINUTE);
         }
         return layout;
     };
@@ -92,17 +86,16 @@ public class EventDetailFragment extends EventDataFragment {
     protected void saveEvent(View v){
         if(checkData() == true) {
             Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), mEventDate);
-            Log.e("Testing", mEventDate.toString());
             newEvent.setID(mTargetEvent.getID());
             EventController eventController = EventController.getInstance(getContext());
             eventController.updateEvent(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
                 public void onDataEditComplete(String message, Exception ex) {
                     if (message != null) {
-                        displayDialog(message);
+                        displayDialog("Event Updated!", message);
                     }
                     else{
-                        displayErrorDialog(ex.getMessage());
+                        displayErrorDialog("Error!", ex.getMessage());
                     }
                 }
             });
@@ -114,14 +107,13 @@ public class EventDetailFragment extends EventDataFragment {
             Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), mEventDate);
             newEvent.setID(mTargetEvent.getID());
             EventController eventController = EventController.getInstance(getContext());
-            eventController.delete(newEvent, new EventController.OnDataEditCompleteListener() {
+            eventController.deleteEvent(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
                 public void onDataEditComplete(String message, Exception ex) {
-                    if(message != null){
-                        displayDialog(message);
-                    }
-                    else{
-                        displayErrorDialog(ex.getMessage());
+                    if (message != null) {
+                        displayDialog("Event Deleted!", message);
+                    } else {
+                        displayErrorDialog("Error!", ex.getMessage());
                     }
                 }
             });
@@ -151,13 +143,13 @@ public class EventDetailFragment extends EventDataFragment {
         mEventDetailDateInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pickDate(v);
+                selectDate(v);
             }
         });
         mEventDetailTimeInput.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pickTime(v);
+                selectTime(v);
             }
         });
     }
