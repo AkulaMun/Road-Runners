@@ -131,14 +131,14 @@ public class EventEditFragment extends Fragment{
             valid = false;
         }
 
-        try{
+        try {
             Double.parseDouble(mDistanceInput.getEditText().getText().toString());
-        } catch(Exception e) {
+        } catch (Exception e) {
             valid = false;
             displayErrorDialog("Invalid Distance!", "Please Check that you have entered the distance correctly!");
         }
 
-        if(valid) {
+        if (valid) {
             Event newEvent = new Event(mNameInput.getEditText().getText().toString(), mLocationInput.getEditText().getText().toString(), mOrganizerInput.getEditText().getText().toString(), Double.parseDouble(mDistanceInput.getEditText().getText().toString()), mEventDate);
             newEvent.setID(mTargetEvent.getID());
             EventController eventController = EventController.getInstance(getContext());
@@ -178,14 +178,14 @@ public class EventEditFragment extends Fragment{
             valid = false;
         }
 
-        try{
+        try {
             Double.parseDouble(mDistanceInput.getEditText().getText().toString());
         } catch(Exception e) {
             valid = false;
             displayErrorDialog("Invalid Distance!", "Please Check that you have entered the distance correctly!");
         }
 
-        if(valid) {
+        if (valid) {
             EventController eventController = EventController.getInstance(getContext());
             eventController.deleteEvent(mTargetEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
@@ -272,10 +272,9 @@ public class EventEditFragment extends Fragment{
         } else {
             //Shouldn't Happen to come here. If it does, recreate event list instead of crashing.
             Log.e("Critical Failure!", "Check Back Stack");
-            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-            EventListFragment eventListFragment = EventListFragment.getInstance();
-            fragmentTransaction.replace(R.id.fragment_container, eventListFragment);
-            fragmentTransaction.commit();
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, EventListFragment.getInstance())
+                    .commit();
         }
     }
 
@@ -286,11 +285,10 @@ public class EventEditFragment extends Fragment{
             fragmentManager.popBackStackImmediate();
         } else {
             //Shouldn't Happen to come here. If it does, recreate event list instead of crashing.
-            FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-            EventListFragment eventListFragment = EventListFragment.getInstance();
-            fragmentTransaction.replace(R.id.fragment_container, eventListFragment);
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+            Log.e("Critical Failure!", "Check Back Stack");
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, EventListFragment.getInstance())
+                    .commit();
         }
     }
 }

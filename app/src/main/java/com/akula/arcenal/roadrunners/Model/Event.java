@@ -5,12 +5,9 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Created by Arcenal on 6/1/2016.
@@ -37,7 +34,7 @@ public class Event {
         mDate = dateFormat((JSONObject) event.opt("date"));
     }
 
-    public JSONObject JSONifyEvent() {
+    public JSONObject convertTOJSON() {
         final JSONObject eventJSON = new JSONObject();
         try {
                 if (mID != null) {
@@ -55,7 +52,7 @@ public class Event {
                 dateDataObject.put("iso", isoDateString);
                 eventJSON.put("date", dateDataObject);
         } catch (JSONException e) {
-
+            Log.e("Error Converting to JSON", e.getMessage());
         }
         return eventJSON;
     }

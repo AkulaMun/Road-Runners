@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,7 +42,7 @@ public class EventListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Called Upon Fragment Creation
         // Inflate the layout for this fragment
-        View layout = inflater.inflate(R.layout.event_list, container, false);
+        View layout = inflater.inflate(R.layout.fragment_event_list, container, false);
         mEventListView = (RecyclerView)layout.findViewById(R.id.event_listing);
         return layout;
     }

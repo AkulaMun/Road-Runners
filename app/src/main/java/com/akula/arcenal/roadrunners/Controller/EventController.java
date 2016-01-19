@@ -1,8 +1,8 @@
 package com.akula.arcenal.roadrunners.controller;
 
 import android.content.Context;
-import android.util.Log;
 
+import com.akula.arcenal.roadrunners.api.ParseRequest;
 import com.akula.arcenal.roadrunners.model.Event;
 import com.android.volley.Cache;
 import com.android.volley.Network;
@@ -94,7 +94,7 @@ public class EventController {
 
     //Saves New Event
     public void saveEvent(Event event, final OnDataEditCompleteListener listener) {
-        ParseRequest request = new ParseRequest(Request.Method.POST, eventURL, event.JSONifyEvent(), new Response.Listener<JSONObject>() {
+        ParseRequest request = new ParseRequest(Request.Method.POST, eventURL, event.convertTOJSON(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 if (listener != null) {
@@ -117,10 +117,10 @@ public class EventController {
     public void updateEvent(Event event, final OnDataEditCompleteListener listener) {
         String ID;
         String URL = eventURL;
-        if ((ID = event.JSONifyEvent().optString("id", null)) != null) {
+        if ((ID = event.convertTOJSON().optString("id", null)) != null) {
             URL += "/" + ID;
         }
-        ParseRequest request = new ParseRequest(Request.Method.PUT, URL, event.JSONifyEvent(), new Response.Listener<JSONObject>() {
+        ParseRequest request = new ParseRequest(Request.Method.PUT, URL, event.convertTOJSON(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 if (listener != null) {
@@ -143,7 +143,7 @@ public class EventController {
     public void deleteEvent(Event event, final OnDataEditCompleteListener listener){
         String ID;
         String URL = eventURL;
-        if ((ID = event.JSONifyEvent().optString("id", null)) != null) {
+        if ((ID = event.convertTOJSON().optString("id", null)) != null) {
             URL += "/" + ID;
         }
         ParseRequest request = new ParseRequest(Request.Method.DELETE, URL, new Response.Listener<JSONObject>() {

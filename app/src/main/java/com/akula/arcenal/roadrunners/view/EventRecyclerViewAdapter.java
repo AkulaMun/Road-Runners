@@ -11,10 +11,6 @@ import android.widget.TextView;
 import com.akula.arcenal.roadrunners.model.Event;
 import com.akula.arcenal.roadrunners.R;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -70,7 +66,7 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
 
     @Override
     public EventHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View listView = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_entry, parent, false);
+        View listView = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_event_entry, parent, false);
         return new EventHolder(listView);
     }
 
