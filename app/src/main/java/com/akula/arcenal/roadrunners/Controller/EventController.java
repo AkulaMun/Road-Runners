@@ -1,6 +1,7 @@
 package com.akula.arcenal.roadrunners.controller;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.akula.arcenal.roadrunners.model.Event;
 import com.android.volley.Cache;
@@ -68,6 +69,7 @@ public class EventController {
                             eventObject.setID(event.getString("objectId"));
                             events.add(eventObject);
                         }
+
                         if (listener != null) {
                             listener.onFetchListComplete(events, null);
                         }
@@ -118,7 +120,7 @@ public class EventController {
         if ((ID = event.JSONifyEvent().optString("id", null)) != null) {
             URL += "/" + ID;
         }
-        ParseRequest request = new ParseRequest(Request.Method.PUT, URL, new Response.Listener<JSONObject>() {
+        ParseRequest request = new ParseRequest(Request.Method.PUT, URL, event.JSONifyEvent(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 if (listener != null) {

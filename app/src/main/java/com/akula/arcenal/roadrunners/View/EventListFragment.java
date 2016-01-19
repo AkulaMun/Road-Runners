@@ -24,7 +24,6 @@ import java.util.List;
  */
 public class EventListFragment extends Fragment {
     private RecyclerView mEventListView;
-    private LinearLayoutManager mEventListManager;
     private static EventListFragment sInstance = null;
 
     public static EventListFragment getInstance(){
@@ -57,15 +56,13 @@ public class EventListFragment extends Fragment {
 
     private void listAllEvents() {
         if (getContext() != null) {
-            mEventListManager = new LinearLayoutManager(getContext());
-            mEventListView.setLayoutManager(mEventListManager);
-            EventController eventController = EventController.getInstance(getContext());
-            eventController.listEvent(new EventController.OnFetchListCompleteListener() {
+            mEventListView.setLayoutManager(new LinearLayoutManager(getContext()));
+            EventController.getInstance(getContext())
+                    .listEvent(new EventController.OnFetchListCompleteListener() {
                 @Override
                 public void onFetchListComplete(final List<Event> eventsList, Exception error) {
                     if (eventsList != null && getContext() != null) {
                         //Check For Null here on getContext() required. Suspected case where request completes but activity is already dead.
-                        mEventListView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
                         mEventListView.setAdapter(new EventRecyclerViewAdapter(eventsList, new EventRecyclerViewAdapter.OnEventEntryClickListener() {
                             @Override
                             public void OnEventClick(Event event) {
@@ -82,23 +79,22 @@ public class EventListFragment extends Fragment {
     }
 
     public void displayEventDetails(Event targetEvent){
-        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-        EventDetailFragment eventDetailFragment = EventDetailFragment.newInstance(targetEvent);
-        fragmentTransaction.replace(R.id.fragment_container, eventDetailFragment);
-        fragmentTransaction.addToBackStack("eventDetailFragment");
-        fragmentTransaction.commit();
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, EventDetailFragment.newInstance(targetEvent))
+                .addToBackStack("EventDetailFragment")
+                .commit();
     }
 
-    protected void displayErrorDialog(String title, String message){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-        alertDialog.setTitle(title);
-        alertDialog.setMessage(message);
-        alertDialog.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                listAllEvents();
-            }
-        });
-        alertDialog.show();
+    private void displayErrorDialog(String title, String message) {
+        new AlertDialog.Builder(getContext())
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
     }
 }

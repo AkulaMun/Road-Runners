@@ -10,8 +10,9 @@
     <string name="event_detail_time_label">Event Time :</string>
     <string name="event_detail_organizer_label">Event Organizer :</string>
     <string name="event_detail_participants_label">Participants :</string>
-    <string name="event_detail_action_button">ACTION!</string>
-    <string name="event_detail_back_button">Back To Events</string>
+    <string name="event_create_action_button">ACTION</string>
+    <string name="event_detail_join_button">Join</string>
+    <string name="event_detail_back_button">Back</string>
     <string name="event_detail_delete_button">Delete Event</string>
     <string name="event_detail_participants_placeholder_text">Placeholder for List.</string>
     <string name="event_detail_date_input_text">Select Date!</string>
