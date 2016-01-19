@@ -29,7 +29,6 @@ public class EventActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e("Activity Resumed", "Activity Resumed.");
         displayEventList();
     }
 

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
@@ -12,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -29,7 +29,7 @@ import java.util.GregorianCalendar;
  * Created by Arcenal on 13/1/2016.
  */
 public class EventCreateFragment extends Fragment {
-    private EditText mNameInput, mDistanceInput, mOrganizerInput, mLocationInput;
+    private TextInputLayout mNameInput, mDistanceInput, mOrganizerInput, mLocationInput;
     private TextView mEventDetailDateInput, mEventDetailTimeInput;
     private Button mEventActionButton;
 
@@ -47,11 +47,11 @@ public class EventCreateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Called Upon Fragment Creation
         // Inflate the layout for this fragment
-        View layout = inflater.inflate(R.layout.event_create, container, false);
-        mNameInput = (EditText) layout.findViewById(R.id.event_detail_name_input);
-        mLocationInput = (EditText) layout.findViewById(R.id.event_detail_location_input);
-        mDistanceInput = (EditText) layout.findViewById(R.id.event_detail_distance_input);
-        mOrganizerInput = (EditText) layout.findViewById(R.id.event_detail_organizer_input);
+        View layout = inflater.inflate(R.layout.fragment_create_event, container, false);
+        mNameInput = (TextInputLayout) layout.findViewById(R.id.event_detail_name_layout);
+        mLocationInput = (TextInputLayout) layout.findViewById(R.id.event_detail_location_layout);
+        mDistanceInput = (TextInputLayout) layout.findViewById(R.id.event_detail_distance_layout);
+        mOrganizerInput = (TextInputLayout) layout.findViewById(R.id.event_detail_organizer_layout);
         mEventActionButton = (Button) layout.findViewById(R.id.event_detail_action_button);
         mEventDetailDateInput = (TextView) layout.findViewById(R.id.event_detail_date_input);
         mEventDetailTimeInput = (TextView) layout.findViewById(R.id.event_detail_time_input);
@@ -86,24 +86,48 @@ public class EventCreateFragment extends Fragment {
         //Input Validity Checking here
         boolean valid = true;
 
-        if(mNameInput.getText().toString().length() == 0 || mLocationInput.getText().toString().length() == 0 || mOrganizerInput.getText().toString().length() == 0 || mDistanceInput.getText().toString().length() == 0) {
+        if (mNameInput.getEditText().getText().toString().length() == 0) {
+            mNameInput.setError("Please provide a name for the event!");
+            mNameInput.setErrorEnabled(true);
             valid = false;
-            displayErrorDialog("Invalid Data!", "Please Check that data entered is valid!");
+        }
+
+        if (mLocationInput.getEditText().getText().toString().length() == 0) {
+            mLocationInput.setError("Please provide a location!");
+            mLocationInput.setErrorEnabled(true);
+            valid = false;
+        }
+        if (mOrganizerInput.getEditText().getText().toString().length() == 0) {
+            mOrganizerInput.setError("Please provide event organizer!");
+            mOrganizerInput.setErrorEnabled(true);
+            valid = false;
+        }
+        if (mDistanceInput.getEditText().getText().toString().length() == 0) {
+            mDistanceInput.setError("Please provide a valid distance or 0 if you're unsure.");
+            mDistanceInput.setErrorEnabled(true);
+            valid = false;
         }
 
         try{
-            Double.parseDouble(mDistanceInput.getText().toString());
-        }
-        catch(Exception e) {
+            Double.parseDouble(mDistanceInput.getEditText().getText().toString());
+        } catch(Exception e) {
             valid = false;
             displayErrorDialog("Invalid Distance!", "Please Check that you have entered the distance correctly!");
         }
+
+        if(valid == true){
+            mNameInput.setErrorEnabled(false);
+            mLocationInput.setErrorEnabled(false);
+            mDistanceInput.setErrorEnabled(false);
+            mOrganizerInput.setErrorEnabled(false);
+        }
+
         return valid;
     }
 
     protected void saveEvent(View v){
         if(checkData() == true) {
-            Event newEvent = new Event(mNameInput.getText().toString(), mLocationInput.getText().toString(), mOrganizerInput.getText().toString(), Double.parseDouble(mDistanceInput.getText().toString()), mEventDate);
+            Event newEvent = new Event(mNameInput.getEditText().getText().toString(), mLocationInput.getEditText().getText().toString(), mOrganizerInput.getEditText().getText().toString(), Double.parseDouble(mDistanceInput.getEditText().getText().toString()), mEventDate);
             EventController eventController = EventController.getInstance(getContext());
             eventController.saveEvent(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
