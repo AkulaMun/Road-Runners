@@ -88,7 +88,7 @@ public class EventCreateFragment extends Fragment {
         });
 
         return layout;
-    };
+    }
 
     protected void saveEvent(View v) {
         boolean valid = true;
@@ -132,7 +132,7 @@ public class EventCreateFragment extends Fragment {
             EventController eventController = EventController.getInstance(getContext());
             eventController.saveEvent(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
-                public void onDataEditComplete(String message, Exception ex) {
+                public void onComplete(String message, Exception ex) {
                     if(message != null){
                         displayDialog("Event Saved!", message);
                     }

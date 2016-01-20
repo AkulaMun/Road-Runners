@@ -12,57 +12,64 @@
         card_view:cardUseCompatPadding="true"
         card_view:cardPreventCornerOverlap="true"
         card_view:cardCornerRadius="5dp">
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            >
-            <TextView
-                android:layout_width="wrap_content"
+            android:orientation="horizontal">
+
+            <TableLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/event_name"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginRight="16dp"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/event_location"
-                android:layout_below="@+id/event_name"
-                android:layout_alignParentLeft="true"
-                android:textSize="16sp"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/event_organizer"
-                android:layout_below="@id/event_location"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/event_date"
-                android:layout_below="@id/event_organizer"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/event_time"
-                android:layout_below="@id/event_date"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/event_distance"
-                android:layout_toLeftOf="@+id/join_event_button"
-                />
+                android:layout_weight="8"
+                android:shrinkColumns="*">
+                <TableRow>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/event_name"
+                        android:layout_marginRight="16dp"
+                        android:layout_weight="6"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/event_distance"
+                        android:layout_weight="4"
+                        />
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/event_organizer"
+                        android:scrollHorizontally="false"/>
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/event_location"/>
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/event_date"/>
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/event_time"/>
+                </TableRow>
+            </TableLayout>
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="45pt"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:id="@+id/join_event_button"
-                android:layout_alignParentRight="true"
-                />
-        </RelativeLayout>
-
+                android:layout_weight="2" />
+        </LinearLayout>
     </android.support.v7.widget.CardView>
 </RelativeLayout>

@@ -62,7 +62,7 @@ public class EventEditFragment extends Fragment{
         mEventDetailTimeInput = (TextView) layout.findViewById(R.id.event_edit_time_input);
 
         return layout;
-    };
+    }
 
     @Override
     public void onResume() {
@@ -144,7 +144,7 @@ public class EventEditFragment extends Fragment{
             EventController eventController = EventController.getInstance(getContext());
             eventController.updateEvent(newEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
-                public void onDataEditComplete(String message, Exception ex) {
+                public void onComplete(String message, Exception ex) {
                     if (message != null) {
                         displayDialog("Event Updated!", message);
                     } else {
@@ -189,7 +189,7 @@ public class EventEditFragment extends Fragment{
             EventController eventController = EventController.getInstance(getContext());
             eventController.deleteEvent(mTargetEvent, new EventController.OnDataEditCompleteListener() {
                 @Override
-                public void onDataEditComplete(String message, Exception ex) {
+                public void onComplete(String message, Exception ex) {
                     if (message != null) {
                         displayDialog("Event Deleted!", message);
                     } else {

@@ -59,7 +59,7 @@ public class EventListFragment extends Fragment {
             EventController.getInstance(getContext())
                     .listEvent(new EventController.OnFetchListCompleteListener() {
                 @Override
-                public void onFetchListComplete(final List<Event> eventsList, Exception error) {
+                public void onComplete(final List<Event> eventsList, Exception error) {
                     if (eventsList != null && getContext() != null) {
                         //Check For Null here on getContext() required. Suspected case where request completes but activity is already dead.
                         mEventListView.setAdapter(new EventRecyclerViewAdapter(eventsList, new EventRecyclerViewAdapter.OnEventEntryClickListener() {

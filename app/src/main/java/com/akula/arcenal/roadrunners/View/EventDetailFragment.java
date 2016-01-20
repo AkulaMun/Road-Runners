@@ -63,7 +63,7 @@ public class EventDetailFragment extends Fragment {
         mEventDetailTimeInput.setText(mTargetEvent.getDateAsString("time"));
 
         return layout;
-    };
+    }
 
     private void displayEventEditFragment() {
         //IMPLEMENT CHECKS FOR OWNERSHIP OF EVENT ENTRY ONCE USER LOGIN IS IMPLEMENTED

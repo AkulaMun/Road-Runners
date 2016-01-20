@@ -47,12 +47,7 @@ public class EventActivity extends AppCompatActivity {
         //Check for Internet Connection. Closes the app with an error dialog if internet is unavailable.
         ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if(activeNetwork == null) {
-            return false;
-        }
-        else{
-            return true;
-        }
+        return activeNetwork != null;
     }
 
     public void displayEventList() {

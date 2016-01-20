@@ -52,7 +52,7 @@ public class Event {
                 dateDataObject.put("iso", isoDateString);
                 eventJSON.put("date", dateDataObject);
         } catch (JSONException e) {
-            Log.e("Error Converting to JSON", e.getMessage());
+            Log.e("JSON Conversion Failed", e.getMessage());
         }
         return eventJSON;
     }
@@ -71,7 +71,7 @@ public class Event {
     }
 
     public String getDateAsString() {
-        SimpleDateFormat isoDateFormat = new SimpleDateFormat("EEE d/MMMM/yyyy  h:ma ZZZZ");
+        SimpleDateFormat isoDateFormat = new SimpleDateFormat("EEE d/MMMM/yyyy  hh:mma ZZZZ");
         return isoDateFormat.format(mDate);
     }
 

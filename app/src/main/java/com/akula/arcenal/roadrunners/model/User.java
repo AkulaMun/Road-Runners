@@ -1,5 +1,10 @@
 package com.akula.arcenal.roadrunners.model;
 
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Arcenal on 13/1/2016.
  */
@@ -22,7 +27,14 @@ public class User {
         mName = name;
     }
 
-    public void login(){
-        //Call Parse Controller and Login with name and password
+    public JSONObject convertToJSON(){
+        try {
+            return new JSONObject()
+                    .put("username", mName)
+                    .put("password", mPassword);
+        } catch (JSONException e) {
+            Log.e("JSON Conversion Failed", e.getMessage());
+            return null;
+        }
     }
 }

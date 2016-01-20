@@ -25,16 +25,24 @@ import java.util.ArrayList;
  */
 public class EventController {
     public interface OnFetchListCompleteListener {
-        void onFetchListComplete(List<Event> events, Exception error);
+        void onComplete(List<Event> events, Exception error);
     }
 
     public interface OnDataEditCompleteListener {
-        void onDataEditComplete(String message, Exception error);
+        void onComplete(String message, Exception error);
     }
 
-    private static EventController mInstance = null;
+    private static EventController sInstance = null;
     private RequestQueue mRequestQueue;
     String eventURL = "https://api.parse.com/1/classes/Event";
+
+    //Public method to get instance of Controller
+    public static EventController getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new EventController(context);
+        }
+        return sInstance;
+    }
 
     //Private Constructor for Singleton
     private EventController(Context context) {
@@ -42,15 +50,6 @@ public class EventController {
         Network mNetwork = new BasicNetwork(new HurlStack());
         mRequestQueue = new RequestQueue(mCache, mNetwork);
         mRequestQueue.start ();
-        mInstance = this;
-    }
-
-    //Public method to get instance of Controller
-    public static EventController getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new EventController(context);
-        }
-        return mInstance;
     }
 
     //List all Events into a list.
@@ -71,11 +70,11 @@ public class EventController {
                         }
 
                         if (listener != null) {
-                            listener.onFetchListComplete(events, null);
+                            listener.onComplete(events, null);
                         }
                     } catch (Exception error) {
                         if (listener != null) {
-                            listener.onFetchListComplete(null, error);
+                            listener.onComplete(null, error);
                         }
                     }
                 }
@@ -84,7 +83,7 @@ public class EventController {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (listener != null) {
-                    listener.onFetchListComplete(null, error);
+                    listener.onComplete(null, error);
                 }
             }
         });
@@ -98,14 +97,14 @@ public class EventController {
             @Override
             public void onResponse(JSONObject response) {
                 if (listener != null) {
-                    listener.onDataEditComplete("Event Successfully Created!\n" + response, null);
+                    listener.onComplete("Event Successfully Created!\n" + response, null);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (listener != null) {
-                    listener.onDataEditComplete(null, error);
+                    listener.onComplete(null, error);
                 }
             }
         });
@@ -124,14 +123,14 @@ public class EventController {
             @Override
             public void onResponse(JSONObject response) {
                 if (listener != null) {
-                    listener.onDataEditComplete("Event Details Successfully Updated!\n" + response.toString(), null);
+                    listener.onComplete("Event Details Successfully Updated!\n" + response.toString(), null);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (listener != null) {
-                    listener.onDataEditComplete(null, error);
+                    listener.onComplete(null, error);
                 }
             }
         });
@@ -150,14 +149,14 @@ public class EventController {
             @Override
             public void onResponse(JSONObject response) {
                 if (listener != null) {
-                    listener.onDataEditComplete("Event has been Successfully Deleted!\n" + response.toString(), null);
+                    listener.onComplete("Event has been Successfully Deleted!\n" + response.toString(), null);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (listener != null) {
-                    listener.onDataEditComplete(null, error);
+                    listener.onComplete(null, error);
                 }
             }
         });
