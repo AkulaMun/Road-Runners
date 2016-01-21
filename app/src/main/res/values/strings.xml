@@ -17,4 +17,7 @@
     <string name="event_detail_participants_placeholder_text">Placeholder for List.</string>
     <string name="event_detail_date_input_text">Select Date!</string>
     <string name="event_detail_time_input_text">Select Time!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

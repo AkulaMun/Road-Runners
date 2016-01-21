@@ -24,25 +24,9 @@ import java.util.ArrayList;
  * Created by Arcenal on 6/1/2016.
  */
 public class EventController {
-    public interface OnFetchListCompleteListener {
-        void onComplete(List<Event> events, Exception error);
-    }
-
-    public interface OnDataEditCompleteListener {
-        void onComplete(String message, Exception error);
-    }
-
-    private static EventController sInstance = null;
     private RequestQueue mRequestQueue;
-    String eventURL = "https://api.parse.com/1/classes/Event";
-
-    //Public method to get instance of Controller
-    public static EventController getInstance(Context context) {
-        if (sInstance == null) {
-            sInstance = new EventController(context);
-        }
-        return sInstance;
-    }
+    private static EventController sInstance = null;
+    private static final String EVENT_URL = "https://api.parse.com/1/classes/Event";
 
     //Private Constructor for Singleton
     private EventController(Context context) {
@@ -52,9 +36,20 @@ public class EventController {
         mRequestQueue.start ();
     }
 
+    //Public method to get instance of Controller
+    public static EventController getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = new EventController(context);
+        }
+        return sInstance;
+    }
+
+    public interface OnFetchListCompleteListener {
+        void onComplete(List<Event> events, Exception error);
+    }
     //List all Events into a list.
-    public void listEvent(final OnFetchListCompleteListener listener) {
-        ParseRequest JSONrequest = new ParseRequest(Request.Method.GET, eventURL, new Response.Listener<JSONObject>() {
+    public void listEvents(final OnFetchListCompleteListener listener) {
+        ParseRequest JSONrequest = new ParseRequest(Request.Method.GET, EVENT_URL, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 if (response != null) {
@@ -87,43 +82,29 @@ public class EventController {
                 }
             }
         });
-
         mRequestQueue.add(JSONrequest);
     }
 
-    //Saves New Event
-    public void saveEvent(Event event, final OnDataEditCompleteListener listener) {
-        ParseRequest request = new ParseRequest(Request.Method.POST, eventURL, event.convertTOJSON(), new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                if (listener != null) {
-                    listener.onComplete("Event Successfully Created!\n" + response, null);
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (listener != null) {
-                    listener.onComplete(null, error);
-                }
-            }
-        });
-
-        mRequestQueue.add(request);
+    public interface OnDataEditCompleteListener {
+        void onComplete(String message, Exception error);
     }
-
-    //Update an Existing Event
-    public void updateEvent(Event event, final OnDataEditCompleteListener listener) {
+    //Saves/Updates New Event
+    public void saveEvent(Event event, final OnDataEditCompleteListener listener) {
         String ID;
-        String URL = eventURL;
+        String URL = EVENT_URL;
+        String message = "Event Successfully Created!";
+        int requestMethod = Request.Method.POST;
         if ((ID = event.convertTOJSON().optString("id", null)) != null) {
             URL += "/" + ID;
+            requestMethod = Request.Method.PUT;
+            message = "Event Details Successfully Updated!";
         }
-        ParseRequest request = new ParseRequest(Request.Method.PUT, URL, event.convertTOJSON(), new Response.Listener<JSONObject>() {
+        final String listenerMessage = message;
+        ParseRequest request = new ParseRequest(requestMethod, URL, event.convertTOJSON(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 if (listener != null) {
-                    listener.onComplete("Event Details Successfully Updated!\n" + response.toString(), null);
+                    listener.onComplete(listenerMessage, null);
                 }
             }
         }, new Response.ErrorListener() {
@@ -134,14 +115,13 @@ public class EventController {
                 }
             }
         });
-
         mRequestQueue.add(request);
     }
 
     //Deletes an existing event
     public void deleteEvent(Event event, final OnDataEditCompleteListener listener){
         String ID;
-        String URL = eventURL;
+        String URL = EVENT_URL;
         if ((ID = event.convertTOJSON().optString("id", null)) != null) {
             URL += "/" + ID;
         }
@@ -149,7 +129,7 @@ public class EventController {
             @Override
             public void onResponse(JSONObject response) {
                 if (listener != null) {
-                    listener.onComplete("Event has been Successfully Deleted!\n" + response.toString(), null);
+                    listener.onComplete("Event has been Successfully Deleted!", null);
                 }
             }
         }, new Response.ErrorListener() {
@@ -160,7 +140,6 @@ public class EventController {
                 }
             }
         });
-
         mRequestQueue.add(request);
     }
 }

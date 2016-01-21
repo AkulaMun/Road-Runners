@@ -1,5 +1,7 @@
 package com.akula.arcenal.roadrunners.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -12,11 +14,27 @@ import java.util.Date;
 /**
  * Created by Arcenal on 6/1/2016.
  */
-public class Event {
-    private String mID, mName, mLocation, mOrganizer;
+public class Event implements Parcelable{
+    private String mID;
+    private String mName;
+    private String mLocation;
+    private String mOrganizer;
     private double mDistance = 0;
     private ArrayList<String> mParticipants;
     private Date mDate;
+
+    public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
+
+        @Override
+        public Event createFromParcel(Parcel source) {
+            return new Event(source);
+        }
+
+        @Override
+        public Event[] newArray(int size) {
+            return new Event[0];
+        }
+    };
 
     public Event(String givenName, String givenLocation, String givenOrganizer, double givenDistance, Date givenDate) {
         mName = givenName;
@@ -32,6 +50,60 @@ public class Event {
         mOrganizer = event.optString("organizer");
         mDistance = event.optDouble("distance");
         mDate = dateFormat((JSONObject) event.opt("date"));
+    }
+
+    private Event(Parcel in) {
+        String name = in.readString();
+        String location = in.readString();
+        String organizer = in.readString();
+        double distance = in.readDouble();
+        Date date = new Date();
+        date.setTime(in.readLong());
+        String id;
+        if( (id = in.readString() ) != null) {
+            mID = id;
+        }
+        mName = name;
+        mLocation = location;
+        mOrganizer = organizer;
+        mDistance = distance;
+        mDate = date;
+    }
+
+    public void setID(String givenID) {
+        mID = givenID;
+    }
+
+    public String getID() {
+        return mID;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public String getLocation() {
+        return mLocation;
+    }
+
+    public double getDistance() {
+        return mDistance;
+    }
+
+    public Date getDate() {
+        return mDate;
+    }
+
+    public String getOrganizer() {
+        return mOrganizer;
+    }
+
+    public void addParticipants(String participant) {
+        mParticipants.add(participant);
+    }
+
+    public ArrayList<String> getParticipants() {
+        return mParticipants;
     }
 
     public JSONObject convertTOJSON() {
@@ -87,59 +159,21 @@ public class Event {
         return "ERROR";
     }
 
-    public void setID(String givenID) {
-        mID = givenID;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public String getID() {
-        return mID;
-    }
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mName);
+        dest.writeString(mLocation);
+        dest.writeString(mOrganizer);
+        dest.writeDouble(mDistance);
+        dest.writeLong(mDate.getTime());
 
-    public void setName(String givenName) {
-        mName = givenName;
-    }
-
-    public String getName() {
-        return mName;
-    }
-
-    public void setLocation(String givenLocation) {
-        mLocation = givenLocation;
-    }
-
-    public String getLocation() {
-        return mLocation;
-    }
-
-    public void setDistance(double givenDistance) {
-        mDistance = givenDistance;
-    }
-
-    public double getDistance() {
-        return mDistance;
-    }
-
-    public void setDate(Date givenDate) {
-        mDate = givenDate;
-    }
-
-    public Date getDate() {
-        return mDate;
-    }
-
-    public void setOrganizer(String givenOrganizer) {
-        mOrganizer = givenOrganizer;
-    }
-
-    public String getOrganizer() {
-        return mOrganizer;
-    }
-
-    public void addParticipants(String participant) {
-        mParticipants.add(participant);
-    }
-
-    public ArrayList<String> getParticipants() {
-        return mParticipants;
+        if (mID != null) {
+            dest.writeString(mID);
+        }
     }
 }

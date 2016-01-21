@@ -21,16 +21,11 @@ import java.util.List;
 /**
  * Created by Arcenal on 6/1/2016.
  */
-public class EventListFragment extends Fragment {
+public class EventsListFragment extends Fragment {
     private RecyclerView mEventListView;
-    private static EventListFragment sInstance = null;
 
-    public static EventListFragment getInstance(){
-        if(sInstance == null){
-            EventListFragment eventListFragment = new EventListFragment();
-            sInstance = eventListFragment;
-        }
-        return sInstance;
+    public static EventsListFragment newInstance() {
+        return new EventsListFragment();
     }
 
     @Override
@@ -43,7 +38,7 @@ public class EventListFragment extends Fragment {
         // Called Upon Fragment Creation
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_event_list, container, false);
-        mEventListView = (RecyclerView)layout.findViewById(R.id.event_listing);
+        mEventListView = (RecyclerView)layout.findViewById(R.id.fragment_event_list_rv);
         return layout;
     }
 
@@ -57,23 +52,23 @@ public class EventListFragment extends Fragment {
         if (getContext() != null) {
             mEventListView.setLayoutManager(new LinearLayoutManager(getContext()));
             EventController.getInstance(getContext())
-                    .listEvent(new EventController.OnFetchListCompleteListener() {
-                @Override
-                public void onComplete(final List<Event> eventsList, Exception error) {
-                    if (eventsList != null && getContext() != null) {
-                        //Check For Null here on getContext() required. Suspected case where request completes but activity is already dead.
-                        mEventListView.setAdapter(new EventRecyclerViewAdapter(eventsList, new EventRecyclerViewAdapter.OnEventEntryClickListener() {
-                            @Override
-                            public void OnEventClick(Event event) {
-                                displayEventDetails(event);
+                    .listEvents(new EventController.OnFetchListCompleteListener() {
+                        @Override
+                        public void onComplete(final List<Event> eventsList, Exception error) {
+                            if (eventsList != null && getContext() != null) {
+                                //Check For Null here on getContext() required. Suspected case where request completes but activity is already dead.
+                                mEventListView.setAdapter(new EventsAdapter(eventsList, new EventsAdapter.OnEventEntryClickListener() {
+                                    @Override
+                                    public void OnEventClick(Event event) {
+                                        displayEventDetails(event);
+                                    }
+                                }));
                             }
-                        }));
-                    }
-                    if (error != null) {
-                        displayErrorDialog("A Problem Occured!", error.getMessage());
-                    }
-                }
-            });
+                            if (error != null) {
+                                displayErrorDialog("A Problem Occured!", error.getMessage());
+                            }
+                        }
+                    });
         }
     }
 

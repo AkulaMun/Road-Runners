@@ -16,50 +16,15 @@ import java.util.List;
 /**
  * Created by Arcenal on 5/1/2016.
  */
-public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecyclerViewAdapter.EventHolder> {
+public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventHolder> {
 
     public interface OnEventEntryClickListener {
         void OnEventClick(Event event);
     }
 
-    public class EventHolder extends RecyclerView.ViewHolder {
-        private CardView mEventEntry;
-        private TextView mEventEntryName, mEventEntryLocation, mEventEntryDistance, mEventOrganizer, mEventDate, mEventTime;
-        private Button mEventJoinButton;
-        private boolean mJoined = false;
-        private Event mEvent = null;
-
-        public EventHolder(View itemView) {
-            super(itemView);
-            mEventEntry = (CardView) itemView.findViewById(R.id.event_entry);
-            mEventEntryName = (TextView) itemView.findViewById(R.id.event_name);
-            mEventEntryLocation = (TextView) itemView.findViewById(R.id.event_location);
-            mEventEntryDistance = (TextView) itemView.findViewById(R.id.event_distance);
-            mEventOrganizer = (TextView) itemView.findViewById(R.id.event_organizer);
-            mEventDate = (TextView) itemView.findViewById(R.id.event_date);
-            mEventTime = (TextView) itemView.findViewById(R.id.event_time);
-            mEventJoinButton = (Button) itemView.findViewById(R.id.join_event_button);
-            mEventJoinButton.setBackgroundResource(R.drawable.standing);
-        }
-
-        public void setEvent(Event event) {
-            mEvent = event;
-        }
-
-        public void toggleJoin() {
-            if (!mJoined) {
-                mEventJoinButton.setBackgroundResource(R.drawable.running);
-                mJoined = true;
-            } else {
-                mEventJoinButton.setBackgroundResource(R.drawable.standing);
-                mJoined = false;
-            }
-        }
-    }
-    //ABOVE IS VIEW HOLDER (INDIVIDUAL ENTRY) CLASS. BELOW IS ADAPTER CLASS.
     private List<Event> mEventEntries;
     private OnEventEntryClickListener mListener;
-    public EventRecyclerViewAdapter(List<Event> givenEntries, OnEventEntryClickListener listener) {
+    public EventsAdapter(List<Event> givenEntries, OnEventEntryClickListener listener) {
         mEventEntries = givenEntries;
         mListener = listener;
     }
@@ -107,5 +72,45 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
                 holder.toggleJoin();
             }
         });
+    }
+
+    public class EventHolder extends RecyclerView.ViewHolder {
+        private CardView mEventEntry;
+        private TextView mEventEntryName;
+        private TextView mEventEntryLocation;
+        private TextView mEventEntryDistance;
+        private TextView mEventOrganizer;
+        private TextView mEventDate;
+        private TextView mEventTime;
+        private Button mEventJoinButton;
+        private boolean mJoined = false;
+        private Event mEvent = null;
+
+        public EventHolder(View itemView) {
+            super(itemView);
+            mEventEntry = (CardView) itemView.findViewById(R.id.event_entry);
+            mEventEntryName = (TextView) itemView.findViewById(R.id.cardview_event_entry_tv_name);
+            mEventEntryLocation = (TextView) itemView.findViewById(R.id.cardview_event_entry_tv_location);
+            mEventEntryDistance = (TextView) itemView.findViewById(R.id.cardview_event_entry_tv_distance);
+            mEventOrganizer = (TextView) itemView.findViewById(R.id.cardview_event_entry_tv_organizer);
+            mEventDate = (TextView) itemView.findViewById(R.id.cardview_event_entry_tv_date);
+            mEventTime = (TextView) itemView.findViewById(R.id.cardview_event_entry_tv_time);
+            mEventJoinButton = (Button) itemView.findViewById(R.id.cardview_event_entry_btn_join_event);
+            mEventJoinButton.setBackgroundResource(R.drawable.standing);
+        }
+
+        public void setEvent(Event event) {
+            mEvent = event;
+        }
+
+        public void toggleJoin() {
+            if (!mJoined) {
+                mEventJoinButton.setBackgroundResource(R.drawable.running);
+                mJoined = true;
+            } else {
+                mEventJoinButton.setBackgroundResource(R.drawable.standing);
+                mJoined = false;
+            }
+        }
     }
 }

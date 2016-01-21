@@ -14,26 +14,28 @@ import com.akula.arcenal.roadrunners.R;
 
 public class EventActivity extends AppCompatActivity {
 
-    private MenuItem mCreateEventMenuItem;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        displayEventList();
+        if(checkConnectivity()) {
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, EventsListFragment.newInstance())
+                        .commit();
+            }
+        }
+        else{
+            displayErrorDialog("No network Access!", "No Network Connection. Some functions might not work!");
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        mCreateEventMenuItem = menu.findItem(R.id.event_create_button);
-        mCreateEventMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        menu.findItem(R.id.event_create_button).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 displayCreateEvent(item);
@@ -44,33 +46,21 @@ public class EventActivity extends AppCompatActivity {
     }
 
     public boolean checkConnectivity(){
-        //Check for Internet Connection. Closes the app with an error dialog if internet is unavailable.
+        //Check for Internet Connection.
         ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null;
-    }
-
-    public void displayEventList() {
-        if(checkConnectivity()) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, EventListFragment.getInstance())
-                    .commit();
-        }
-        else{
-            displayErrorDialog("Error!", "No Network Connection. Check your settings!");
-        }
     }
 
     //CreateEventFragment is displayed by Menu Item click.
     public void displayCreateEvent(MenuItem clickedItem) {
         if(checkConnectivity()) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, EventCreateFragment.newInstance())
+                    .replace(R.id.fragment_container, EventEditFragment.newInstance(null))
                     .addToBackStack("createEventFragment")
                     .commit();
-        }
-        else{
-            displayErrorDialog("Error!", "No Network Connection. Check your settings!");
+        } else {
+            displayErrorDialog("No network Access!", "No Network Connection. Some functions might not work!");
         }
     }
 
@@ -82,7 +72,7 @@ public class EventActivity extends AppCompatActivity {
                 .setPositiveButton("Done", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        finish();
+
                     }
                 })
                 .show();

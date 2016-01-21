@@ -14,16 +14,22 @@ import com.akula.arcenal.roadrunners.R;
  * Created by Arcenal on 6/1/2016.
  */
 public class EventDetailFragment extends Fragment {
-    private TextView mNameInput, mDistanceInput, mOrganizerInput, mLocationInput, mEventDetailDateInput, mEventDetailTimeInput;
-    private Button mEventActionButton, mBackButton;
-
+    private static String EVENT = "event";
     //Defaulted to current time
     private Event mTargetEvent;
 
     public static EventDetailFragment newInstance(Event targetEvent) {
         EventDetailFragment eventDetailFragment = new EventDetailFragment();
-        eventDetailFragment.mTargetEvent = targetEvent;
+        Bundle args = new Bundle();
+        args.putParcelable(EVENT, targetEvent);
+        eventDetailFragment.setArguments(args);
         return eventDetailFragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mTargetEvent = getArguments().getParcelable(EVENT);
     }
 
     @Override
@@ -31,36 +37,36 @@ public class EventDetailFragment extends Fragment {
         // Called Upon Fragment Creation
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_event_detail, container, false);
-        mNameInput = (TextView) layout.findViewById(R.id.event_detail_name_display);
-        mLocationInput = (TextView) layout.findViewById(R.id.event_detail_location_display);
-        mDistanceInput = (TextView) layout.findViewById(R.id.event_detail_distance_display);
-        mOrganizerInput = (TextView) layout.findViewById(R.id.event_detail_organizer_display);
-        mEventActionButton = (Button) layout.findViewById(R.id.event_detail_action_button);
-        mBackButton = (Button) layout.findViewById(R.id.event_detail_back_button);
-        mEventDetailDateInput = (TextView) layout.findViewById(R.id.event_detail_date_display);
-        mEventDetailTimeInput = (TextView) layout.findViewById(R.id.event_detail_time_display);
+        TextView nameInput = (TextView) layout.findViewById(R.id.fragment_event_detail_tv_name_display);
+        TextView locationInput = (TextView) layout.findViewById(R.id.fragment_event_detail_tv_location_display);
+        TextView distanceInput = (TextView) layout.findViewById(R.id.fragment_event_detail_tv_distance_display);
+        TextView organizerInput = (TextView) layout.findViewById(R.id.fragment_event_detail_tv_organizer_display);
+        Button  eventActionButton = (Button) layout.findViewById(R.id.fragment_event_detail_btn_action);
+        Button  backButton = (Button) layout.findViewById(R.id.event_detail_back_button);
+        TextView eventDetailDateInput = (TextView) layout.findViewById(R.id.fragment_event_detail_tv_date_display);
+        TextView eventDetailTimeInput = (TextView) layout.findViewById(R.id.fragment_event_detail_tv_time_display);
 
-        mBackButton.setOnClickListener(new View.OnClickListener() {
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 displayEventList();
             }
         });
 
-        mEventActionButton.setText("Edit Event");
-        mEventActionButton.setOnClickListener(new View.OnClickListener() {
+        eventActionButton.setText("Edit Event");
+        eventActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 displayEventEditFragment();
             }
         });
 
-        mNameInput.setText(mTargetEvent.getName());
-        mLocationInput.setText(mTargetEvent.getLocation());
-        mDistanceInput.setText(Double.toString(mTargetEvent.getDistance()));
-        mOrganizerInput.setText(mTargetEvent.getOrganizer());
-        mEventDetailDateInput.setText(mTargetEvent.getDateAsString("date"));
-        mEventDetailTimeInput.setText(mTargetEvent.getDateAsString("time"));
+        nameInput.setText(mTargetEvent.getName());
+        locationInput.setText(mTargetEvent.getLocation());
+        distanceInput.setText(Double.toString(mTargetEvent.getDistance()));
+        organizerInput.setText(mTargetEvent.getOrganizer());
+        eventDetailDateInput.setText(mTargetEvent.getDateAsString("date"));
+        eventDetailTimeInput.setText(mTargetEvent.getDateAsString("time"));
 
         return layout;
     }
@@ -71,7 +77,6 @@ public class EventDetailFragment extends Fragment {
                 .replace(R.id.fragment_container, EventEditFragment.newInstance(mTargetEvent))
                 .addToBackStack("EventEditFragment")
                 .commit();
-
     }
 
     private void displayEventList() {
@@ -82,7 +87,7 @@ public class EventDetailFragment extends Fragment {
         } else {
             //Shouldn't Happen to come here. If it does, recreate event list instead of crashing.
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, EventListFragment.getInstance())
+                    .replace(R.id.fragment_container, EventsListFragment.newInstance())
                     .addToBackStack("EventListFragment")
                     .commit();
         }
